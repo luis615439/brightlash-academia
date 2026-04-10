@@ -1,0 +1,14 @@
+# System files
+.DS_Store
+Thumbs.db
+
+# Agent files
+.DS_Store
+*.log
+.claudignore
+
+# Build files
+dist/
+build/
+.next/
+.vercel

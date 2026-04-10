@@ -1,0 +1,7 @@
+{
+    "completion_provider": "openrouter",
+    "openrouter": {
+        "api_key": "c3c27d5455377d4d817106b128a466ae64a1dbdfa502",
+        "model": "openrouter/free"
+    }
+}

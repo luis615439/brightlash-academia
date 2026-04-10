@@ -1,0 +1,1728 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Just Lash Academy — Cursos de Pestañas Premium en CDMX</title>
+  <meta name="description" content="Certificación elite certificada en CDMX. Domina técnicas de Mega Volume, Branding y Wet Look con los mejores maestros de México. Formación de lujo para artistas." />
+  <meta name="keywords" content="cursos de pestañas premium, certificación lashista cdmx, mega volume mastery, academia de pestañas de lujo" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "EducationOrganization",
+    "name": "Just Lash Academy",
+    "url": "https://justlash.mx",
+    "logo": "https://justlash.mx/logo.png",
+    "description": "Academia boutique especializada en formación de elite para artistas de pestañas.",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Ciudad de México",
+      "addressCountry": "MX"
+    },
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "Certificaciones Lashista Elite",
+      "itemListElement": [
+        { "@type": "Course", "name": "Mega Volume Mastery" },
+        { "@type": "Course", "name": "Boutique Business Mastery" },
+        { "@type": "Course", "name": "Wet Look Masterclass" }
+      ]
+    }
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ── RESET & TOKENS ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --ink:        #0a0906;
+      --ink-soft:   #1a1714;
+      --gold:       #C9A96E;
+      --gold-light: #E2C99A;
+      --gold-pale:  #F5ECD8;
+      --cream:      #FDFAF5;
+      --ivory:      #F5F0E8;
+      --text-muted: #7a7068;
+      --text-body:  #3d3830;
+      --glass-bg:   rgba(253,250,245,0.08);
+      --glass-border: rgba(201,169,110,0.25);
+      --radius-sm:  6px;
+      --radius-md:  14px;
+      --radius-lg:  28px;
+      --shadow-gold: 0 8px 48px rgba(201,169,110,0.18);
+      --shadow-soft: 0 4px 32px rgba(10,9,6,0.12);
+      --transition: 0.55s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    /* ── ENTRANCE GATE (Lujo Inicial) ──────────────────────────── */
+    #entrance-gate {
+      position: fixed; inset: 0; background: var(--ink); z-index: 9999;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      transition: opacity 1.2s var(--transition), visibility 1.2s;
+    }
+    #entrance-gate.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+    .gate-logo {
+      font-family: 'Cormorant Garamond', serif; 
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      color: var(--gold);
+      display: flex; align-items: center; gap: 20px; 
+      letter-spacing: 0.22em; text-transform: uppercase;
+      opacity: 0; transform: translateY(10px);
+      filter: blur(5px);
+      animation: gate-reveal 1.4s 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .gate-logo span { color: var(--cream); font-weight: 300; }
+    .gate-logo-dot { 
+      width: 8px; height: 8px; background: var(--gold); 
+      border-radius: 50%; box-shadow: 0 0 20px var(--gold); 
+    }
+    @keyframes gate-reveal {
+      to { opacity: 1; transform: translateY(0); filter: blur(0); }
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--ink);
+      color: var(--cream);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── SCROLLBAR ──────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--ink); }
+    ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 2px; }
+
+    /* ── NAVBAR ─────────────────────────────────────────────────── */
+    #navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 0 5vw;
+      height: 72px;
+      display: flex; align-items: center; justify-content: space-between;
+      transition: background var(--transition), backdrop-filter 0.4s ease, border-bottom 0.4s ease;
+      border-bottom: 1px solid transparent;
+    }
+    #navbar.scrolled {
+      background: rgba(10,9,6,0.82);
+      backdrop-filter: blur(20px) saturate(1.4);
+      -webkit-backdrop-filter: blur(20px) saturate(1.4);
+      border-bottom-color: var(--glass-border);
+    }
+
+    /* isMounted guard — navbar hidden until JS mounts */
+    #navbar { opacity: 0; transform: translateY(-8px); }
+    #navbar.mounted {
+      opacity: 1; transform: translateY(0);
+      transition: opacity 0.5s ease, transform 0.5s ease,
+                  background var(--transition), backdrop-filter 0.4s ease, border-bottom 0.4s ease;
+    }
+
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.55rem; font-weight: 500; letter-spacing: 0.1em;
+      color: var(--cream); text-decoration: none;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .nav-logo span { color: var(--gold); }
+    .nav-logo-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--gold); display: inline-block;
+      animation: pulse-dot 2.5s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%,100% { opacity:1; transform: scale(1); }
+      50% { opacity:.5; transform: scale(0.7); }
+    }
+
+    .nav-links { display: flex; align-items: center; gap: 2.4rem; }
+    .nav-links a {
+      font-size: 0.78rem; font-weight: 500; letter-spacing: 0.12em;
+      text-transform: uppercase; color: rgba(253,250,245,0.72);
+      text-decoration: none;
+      transition: color 0.3s ease;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -4px; left: 0; right: 0;
+      height: 1px; background: var(--gold);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.35s ease;
+    }
+    .nav-links a:hover { color: var(--gold-light); }
+    .nav-links a:hover::after { transform: scaleX(1); }
+
+    .btn-nav {
+      background: var(--gold);
+      color: var(--ink) !important;
+      padding: 9px 22px; border-radius: 50px;
+      font-size: 0.75rem !important; font-weight: 600 !important;
+      letter-spacing: 0.1em; transition: all 0.3s ease !important;
+      box-shadow: 0 0 0 0 rgba(201,169,110,0.4);
+    }
+    .btn-nav::after { display: none !important; }
+    .btn-nav:hover {
+      background: var(--gold-light);
+      box-shadow: 0 0 24px 4px rgba(201,169,110,0.3) !important;
+      transform: translateY(-1px);
+    }
+
+    /* ── HERO ───────────────────────────────────────────────────── */
+    @keyframes kenBurns {
+      0% { transform: scale(1.05); filter: brightness(0.7); }
+      100% { transform: scale(1.15); filter: brightness(0.9); }
+    }
+    #hero {
+      position: relative; height: 100svh; min-height: 650px;
+      display: flex; align-items: center; overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background-image: url('hero.png');
+      background-size: cover; background-position: center 30%;
+      z-index: -2; opacity: 0; transition: opacity 2s var(--transition);
+      will-change: transform;
+    }
+    .hero-bg.loaded { 
+      opacity: 1; 
+      animation: kenBurns 20s ease-out forwards;
+    }
+
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: radial-gradient(circle at center, rgba(10,9,6,0.2) 0%, rgba(10,9,6,0.92) 85%);
+      z-index: -1;
+    }
+    .hero-overlay-bottom {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 250px;
+      background: linear-gradient(to top, var(--ink) 0%, transparent 100%);
+      z-index: -1;
+    }
+
+    .hero-content {
+      position: relative; z-index: 2;
+      padding: 0 5vw; max-width: 700px;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 12px;
+      font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--gold); font-weight: 500; margin-bottom: 2rem;
+      opacity: 0; transform: translateY(20px);
+      animation: fade-up 0.8s 0.3s var(--transition) forwards;
+    }
+    .hero-eyebrow-line { height: 1px; width: 36px; background: var(--gold); }
+
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3.2rem, 7vw, 6.2rem);
+      line-height: 1.05; font-weight: 300;
+      color: var(--cream); margin-bottom: 0.2em;
+      opacity: 0; transform: translateY(24px);
+      animation: fade-up 0.9s 0.5s var(--transition) forwards;
+    }
+    .hero-title em {
+      font-style: italic;
+      background: linear-gradient(to right, var(--gold-light), var(--gold));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 300;
+      display: inline-block;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(1rem, 1.6vw, 1.18rem);
+      color: rgba(245,240,232,0.7); line-height: 1.75;
+      font-weight: 300; margin-bottom: 2.8rem; max-width: 520px;
+      opacity: 0; transform: translateY(20px);
+      animation: fade-up 0.9s 0.75s var(--transition) forwards;
+    }
+
+    .hero-ctas {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+      opacity: 0; transform: translateY(20px);
+      animation: fade-up 0.9s 1s var(--transition) forwards;
+    }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--gold); color: var(--ink);
+      padding: 15px 36px; border-radius: 50px;
+      font-weight: 600; font-size: 0.82rem; letter-spacing: 0.1em;
+      text-transform: uppercase; text-decoration: none;
+      transition: all 0.35s ease;
+      box-shadow: 0 0 0 0 rgba(201,169,110,0.5);
+    }
+    .btn-primary:hover {
+      background: var(--gold-light);
+      box-shadow: 0 8px 36px rgba(201,169,110,0.4);
+      transform: translateY(-2px);
+    }
+    .btn-primary svg { width: 16px; height: 16px; }
+
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 10px;
+      border: 1px solid rgba(201,169,110,0.45); color: var(--gold-light);
+      padding: 15px 34px; border-radius: 50px;
+      font-weight: 500; font-size: 0.82rem; letter-spacing: 0.1em;
+      text-transform: uppercase; text-decoration: none;
+      transition: all 0.35s ease;
+      backdrop-filter: blur(8px);
+    }
+    .btn-secondary:hover {
+      background: rgba(201,169,110,0.12);
+      border-color: var(--gold-light);
+      transform: translateY(-2px);
+    }
+
+    .hero-scroll-hint {
+      position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase;
+      color: rgba(201,169,110,0.6); z-index: 2;
+      animation: bounce-scroll 2.5s ease-in-out infinite;
+    }
+    .scroll-line {
+      width: 1px; height: 44px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      animation: extend-line 2.5s ease-in-out infinite;
+    }
+    @keyframes bounce-scroll {
+      0%,100% { opacity:0.6; transform: translateX(-50%) translateY(0); }
+      50% { opacity:1; transform: translateX(-50%) translateY(6px); }
+    }
+    @keyframes extend-line {
+      0%,100% { transform: scaleY(1); opacity:0.6; }
+      50% { transform: scaleY(1.3); opacity:1; }
+    }
+
+    /* ── SECTION SHARED ─────────────────────────────────────────── */
+    section { padding: 110px 5vw; }
+    .section-eyebrow {
+      display: flex; align-items: center; gap: 14px;
+      font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 1.2rem;
+    }
+    .section-eyebrow-line { height: 1px; width: 36px; background: var(--gold); }
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.4rem, 4.5vw, 3.8rem);
+      font-weight: 300; line-height: 1.12; color: var(--cream);
+      margin-bottom: 1rem;
+    }
+    .section-title em {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      background: linear-gradient(to right, var(--gold-light), var(--gold));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+    }
+    .section-subtitle {
+      font-size: 1rem; color: var(--text-muted);
+      line-height: 1.8; font-weight: 300; max-width: 520px;
+    }
+    .text-center { text-align: center; }
+    .text-center .section-eyebrow { justify-content: center; }
+    .text-center .section-subtitle { margin: 0 auto; }
+
+    /* ── REVEAL ANIMATION ───────────────────────────────────────── */
+    .reveal {
+      opacity: 0; transform: translateY(36px);
+      transition: opacity 0.85s var(--transition), transform 0.85s var(--transition);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.32s; }
+    .reveal-delay-4 { transition-delay: 0.44s; }
+
+    @keyframes fade-up {
+      to { opacity:1; transform: translateY(0); }
+    }
+
+    /* ── DIVIDER ─────────────────────────────────────────────────── */
+    .divider {
+      width: 64px; height: 1px; background: var(--gold);
+      margin: 0 auto;
+    }
+
+    /* ── BRAND STRIP ─────────────────────────────────────────────── */
+    #brand-strip {
+      padding: 0; background: var(--ink-soft);
+      border-top: 1px solid var(--glass-border);
+      border-bottom: 1px solid var(--glass-border);
+      overflow: hidden;
+    }
+    .strip-track {
+      display: flex; gap: 4rem;
+      padding: 1.1rem 0;
+      animation: marquee 24s linear infinite;
+      white-space: nowrap;
+    }
+    .strip-item {
+      display: inline-flex; align-items: center; gap: 14px;
+      font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--text-muted); font-weight: 500; flex-shrink: 0;
+    }
+    .strip-diamond { color: var(--gold); font-size: 0.5rem; }
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    /* ── SERVICES ────────────────────────────────────────────────── */
+    #services { background: var(--ink); }
+    .services-header { margin-bottom: 4.5rem; }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5px;
+    }
+    .service-card {
+      position: relative; overflow: hidden;
+      background: var(--ink-soft);
+      padding: 3rem 2.4rem;
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: default;
+    }
+    .service-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      transform: scaleX(0); transform-origin: center;
+      transition: transform 0.55s ease;
+    }
+    .service-card:hover {
+      background: rgba(201, 169, 110, 0.04);
+      border-color: var(--gold);
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(10, 9, 6, 0.4), 
+                  0 0 20px rgba(201, 169, 110, 0.1);
+    }
+    .service-card:hover::before { transform: scaleX(1); }
+
+    .service-icon {
+      width: 52px; height: 52px; border-radius: var(--radius-sm);
+      border: 1px solid var(--glass-border);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1.8rem; font-size: 1.5rem;
+      background: rgba(201,169,110,0.06);
+      transition: all 0.4s ease;
+    }
+    .service-card:hover .service-icon {
+      border-color: var(--gold);
+      background: rgba(201,169,110,0.12);
+      box-shadow: 0 0 20px rgba(201,169,110,0.15);
+    }
+
+    .service-tag {
+      font-size: 0.65rem; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--gold); font-weight: 500; margin-bottom: 0.7rem;
+    }
+    .service-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.7rem; font-weight: 400; color: var(--cream);
+      line-height: 1.2; margin-bottom: 1rem;
+    }
+    .service-desc {
+      font-size: 0.875rem; color: var(--text-muted);
+      line-height: 1.75; font-weight: 300;
+    }
+    .service-price {
+      margin-top: 1.8rem; padding-top: 1.4rem;
+      border-top: 1px solid rgba(201,169,110,0.15);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem; color: var(--gold-light); font-weight: 400;
+    }
+    .service-price span { font-size: 0.75rem; font-family: 'Inter', sans-serif; color: var(--text-muted); }
+
+    /* ── AUTHORITY / STUDIO ───────────────────────────────────── */
+    #authority {
+      background: var(--ink-soft);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      padding: 0;
+    }
+    .authority-visual {
+      position: relative; overflow: hidden; height: 680px;
+    }
+    .authority-visual img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 8s ease;
+    }
+    .authority-visual:hover img { transform: scale(1.04); }
+    .authority-visual-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(10,9,6,0.5) 0%, transparent 60%);
+    }
+    .authority-badge {
+      position: absolute; bottom: 2.4rem; left: 2.4rem;
+      background: rgba(10,9,6,0.82); backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      padding: 1.1rem 1.6rem; border-radius: var(--radius-md);
+    }
+    .authority-badge-label {
+      font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 0.3rem;
+    }
+    .authority-badge-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem; color: var(--cream); font-weight: 300;
+    }
+
+    .authority-content {
+      padding: 7rem 5vw;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .stats-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1.5rem; margin-top: 3.5rem;
+    }
+    .stat-item {
+      padding: 1.6rem;
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      transition: all 0.35s ease;
+    }
+    .stat-item:hover {
+      border-color: var(--gold);
+      background: rgba(201,169,110,0.05);
+    }
+    .stat-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.8rem; font-weight: 300;
+      color: var(--gold-light); line-height: 1;
+    }
+    .stat-label {
+      font-size: 0.78rem; color: var(--text-muted);
+      margin-top: 0.5rem; letter-spacing: 0.05em;
+    }
+
+    /* ── PROCESS ────────────────────────────────────────────────── */
+    #process { background: var(--ink); }
+    .process-steps {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 2px; margin-top: 4rem;
+    }
+    .process-step {
+      padding: 2.8rem 2.2rem;
+      position: relative;
+      border-top: 1px solid var(--glass-border);
+      transition: background 0.35s ease;
+    }
+    .process-step:hover { background: rgba(201,169,110,0.04); }
+    .step-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 4rem; font-weight: 300; color: rgba(201,169,110,0.12);
+      line-height: 1; margin-bottom: 1.2rem;
+      transition: color 0.35s ease;
+    }
+    .process-step:hover .step-number { color: rgba(201,169,110,0.25); }
+    .step-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.35rem; color: var(--cream);
+      margin-bottom: 0.8rem;
+    }
+    .step-desc {
+      font-size: 0.85rem; color: var(--text-muted);
+      line-height: 1.7; font-weight: 300;
+    }
+
+    /* ── TESTIMONIALS ────────────────────────────────────────────── */
+    #testimonials { background: var(--ink-soft); }
+    .testimonials-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem; margin-top: 4rem;
+    }
+    .testimonial-card {
+      border: 1px solid var(--glass-border);
+      padding: 2.4rem; border-radius: var(--radius-md);
+      background: rgba(10,9,6,0.4);
+      transition: all 0.4s ease;
+    }
+    .testimonial-card:hover {
+      border-color: rgba(201,169,110,0.4);
+      background: rgba(10,9,6,0.6);
+      box-shadow: var(--shadow-gold);
+    }
+    .testimonial-stars {
+      display: flex; gap: 4px; margin-bottom: 1.3rem;
+      color: var(--gold);
+    }
+    .testimonial-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem; color: rgba(245,240,232,0.88);
+      line-height: 1.7; font-style: italic; font-weight: 300;
+      margin-bottom: 1.5rem;
+    }
+    .testimonial-author {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .author-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      border: 1.5px solid var(--glass-border);
+      background: var(--gold-pale);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; font-weight: 600; color: var(--gold);
+      font-family: 'Cormorant Garamond', serif;
+      flex-shrink: 0;
+    }
+    .author-name {
+      font-size: 0.85rem; color: var(--cream); font-weight: 500;
+    }
+    .author-role {
+      font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;
+    }
+
+    /* ── CERTIFICATIONS STRIP ────────────────────────────────────── */
+    #certifications {
+      padding: 4rem 5vw;
+      background: var(--ink);
+      border-top: 1px solid var(--glass-border);
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .cert-grid {
+      display: flex; flex-wrap: wrap;
+      justify-content: center; align-items: center;
+      gap: 2.5rem 5rem;
+    }
+    .cert-item {
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      opacity: 0.5; transition: opacity 0.3s ease;
+    }
+    .cert-item:hover { opacity: 1; }
+    .cert-icon { font-size: 2rem; }
+    .cert-label {
+      font-size: 0.68rem; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--text-muted);
+    }
+
+    /* ── CLOSING CTA ─────────────────────────────────────────────── */
+    #cta {
+      padding: 140px 5vw;
+      background: var(--ink);
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .cta-glow {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(ellipse, rgba(201,169,110,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-content { position: relative; z-index: 1; }
+    .cta-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.8rem, 6vw, 5.5rem);
+      font-weight: 300; line-height: 1.1; color: var(--cream);
+      margin-bottom: 1.2rem;
+    }
+    .cta-title em { font-style: italic; color: var(--gold-light); }
+    .cta-subtitle {
+      font-size: 1.05rem; color: var(--text-muted);
+      line-height: 1.8; font-weight: 300; margin-bottom: 3rem;
+      max-width: 520px; margin-left: auto; margin-right: auto;
+    }
+    .cta-actions {
+      display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+    }
+    .btn-cta-primary {
+      display: inline-flex; align-items: center; gap: 12px;
+      background: var(--gold); color: var(--ink);
+      padding: 18px 42px; border-radius: 50px;
+      font-weight: 600; font-size: 0.85rem; letter-spacing: 0.1em;
+      text-transform: uppercase; text-decoration: none;
+      transition: all 0.35s ease;
+      box-shadow: 0 0 0 0 rgba(201,169,110,0.5);
+    }
+    .btn-cta-primary:hover {
+      background: var(--gold-light);
+      box-shadow: 0 12px 48px rgba(201,169,110,0.4);
+      transform: translateY(-3px);
+    }
+    .btn-cta-secondary {
+      display: inline-flex; align-items: center; gap: 10px;
+      border: 1px solid rgba(201,169,110,0.4); color: var(--gold-light);
+      padding: 18px 40px; border-radius: 50px;
+      font-weight: 400; font-size: 0.85rem; letter-spacing: 0.1em;
+      text-transform: uppercase; text-decoration: none;
+      transition: all 0.35s ease;
+    }
+    .btn-cta-secondary:hover {
+      background: rgba(201,169,110,0.1);
+      border-color: var(--gold-light);
+      transform: translateY(-3px);
+    }
+
+    /* ── FOOTER ─────────────────────────────────────────────────── */
+    footer {
+      background: var(--ink-soft);
+      border-top: 1px solid var(--glass-border);
+      padding: 4rem 5vw 2.5rem;
+    }
+    .footer-top {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 3rem; margin-bottom: 3rem;
+    }
+    .footer-brand-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem; color: var(--cream); margin-bottom: 0.8rem;
+    }
+    .footer-brand-desc {
+      font-size: 0.85rem; color: var(--text-muted);
+      line-height: 1.8; font-weight: 300; max-width: 260px;
+    }
+    .footer-col-title {
+      font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 1.2rem; font-weight: 500;
+    }
+    .footer-col-links { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; }
+    .footer-col-links a {
+      font-size: 0.85rem; color: var(--text-muted); text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    .footer-col-links a:hover { color: var(--gold-light); }
+    .footer-bottom {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: 2rem; border-top: 1px solid var(--glass-border);
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-copy {
+      font-size: 0.78rem; color: var(--text-muted);
+    }
+    .footer-socials { display: flex; gap: 1rem; }
+    .social-link {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1px solid var(--glass-border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted); text-decoration: none; font-size: 0.85rem;
+      transition: all 0.3s ease;
+    }
+    .social-link:hover {
+      border-color: var(--gold);
+      color: var(--gold); background: rgba(201,169,110,0.08);
+    }
+
+    /* ── ACADEMY / COURSES ─────────────────────────────────────── */
+    #academy { background: var(--ink-soft); }
+    .academy-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2.5rem; margin-top: 4rem;
+    }
+    
+    /* Obsidian Crystal Styling */
+    .academy-card.obsidian {
+      position: relative; 
+      background: rgba(10, 9, 6, 0.78);
+      backdrop-filter: blur(28px) saturate(1.2);
+      -webkit-backdrop-filter: blur(28px) saturate(1.2);
+      border: 1px solid rgba(201, 169, 110, 0.25);
+      border-radius: var(--radius-lg);
+      padding: 0; overflow: hidden;
+      transition: all 0.6s var(--transition);
+      display: flex; flex-direction: column;
+      box-shadow: inset 0 0 32px rgba(0,0,0,0.5);
+    }
+    
+    .academy-card.obsidian:hover {
+      border-color: var(--gold);
+      transform: translateY(-10px);
+      box-shadow: var(--shadow-gold), inset 0 0 40px rgba(201,169,110,0.05);
+    }
+
+    .course-header {
+      position: relative; height: 180px; overflow: hidden;
+    }
+    .course-header img {
+      width: 100%; height: 100%; object-fit: cover;
+      opacity: 0.6; transition: scale 1s ease;
+    }
+    .academy-card.obsidian:hover .course-header img { scale: 1.05; opacity: 0.8; }
+    
+    .course-content { padding: 2.5rem 2.2rem; display: flex; flex-direction: column; gap: 1.5rem; }
+    .course-badge {
+      position: absolute; top: 1.2rem; right: 1.2rem;
+      background: var(--gold); color: var(--ink);
+      padding: 6px 14px; border-radius: 50px;
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; z-index: 2;
+    }
+
+    .course-topics {
+      list-style: none; display: flex; flex-direction: column; gap: 0.8rem;
+      margin: 1.2rem 0; text-align: left;
+    }
+    .topic-item {
+      display: flex; align-items: flex-start; gap: 12px;
+      font-size: 0.88rem; color: var(--text-muted); line-height: 1.4;
+    }
+    .topic-icon { color: var(--gold); font-size: 0.85rem; margin-top: 3px; }
+
+    .course-footer {
+      margin-top: auto; padding: 1.2rem 2.2rem 2.5rem;
+      border-top: 1px solid rgba(201,169,110,0.1);
+      display: flex; flex-direction: column; gap: 1.5rem;
+    }
+    .course-details-row {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
+    }
+    .detail-label { color: var(--gold-light); font-weight: 500; }
+    .detail-value { color: var(--cream); font-weight: 400; }
+
+    .btn-academy {
+      width: 100%;
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      border: 1px solid var(--gold); color: var(--cream);
+      padding: 16px; border-radius: 50px;
+      font-size: 0.8rem; font-weight: 600; letter-spacing: 0.12em;
+      text-transform: uppercase; text-decoration: none;
+      transition: all 0.35s ease;
+      background: transparent;
+    }
+    /* ── AUTHORITY / MAGAZINE TESTIMONIALS ────────────────────── */
+    .magazine-review {
+      background: rgba(253, 250, 245, 0.03);
+      border: 1px solid rgba(201, 169, 110, 0.15);
+      padding: 3rem 2rem; border-radius: var(--radius-md);
+      text-align: center; transition: var(--transition);
+    }
+    .magazine-review:hover { border-color: var(--gold); background: rgba(201, 169, 110, 0.05); }
+    
+    .review-source {
+      font-size: 0.65rem; color: var(--gold); letter-spacing: 0.25em;
+      text-transform: uppercase; font-weight: 700; margin-bottom: 1.5rem;
+    }
+    .review-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem; color: var(--cream); font-style: italic; line-height: 1.3;
+      margin-bottom: 2rem; position: relative;
+    }
+    .review-author {
+      font-size: 0.8rem; letter-spacing: 0.1em; color: var(--gold-light);
+      text-transform: uppercase; font-weight: 500;
+    }
+    .review-badge {
+      display: inline-block; padding: 4px 10px; background: var(--gold);
+      color: var(--ink); font-size: 0.6rem; font-weight: 800; border-radius: 4px;
+      margin-top: 1rem;
+    }
+
+    /* ── RITUAL DE CERTIFICACIÓN ───────────────────────────────── */
+    #ritual { 
+      padding: 100px 0; background: linear-gradient(to bottom, var(--ink), var(--ink-soft)); 
+      position: relative; overflow: hidden;
+    }
+    .ritual-header { text-align: center; margin-bottom: 5rem; }
+    .ritual-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 3rem; max-width: 1200px; margin: 0 auto;
+    }
+    .ritual-step {
+      display: flex; flex-direction: column; gap: 1.5rem; position: relative;
+    }
+    .ritual-num {
+      font-family: 'Cormorant Garamond', serif; font-size: 4rem;
+      color: rgba(201, 169, 110, 0.15); line-height: 0.8;
+    }
+    .ritual-title {
+      font-size: 1.25rem; color: var(--gold); letter-spacing: 0.05em; font-weight: 500;
+    }
+    .ritual-desc {
+      font-size: 0.9rem; color: var(--text-muted); line-height: 1.7; font-weight: 300;
+    }
+    .ritual-connector {
+      position: absolute; top: 2rem; right: -1.5rem; width: 3rem; height: 1px;
+      background: linear-gradient(to right, rgba(201,169,110,0.3), transparent);
+    }
+    @media (max-width: 992px) { .ritual-connector { display: none; } }
+
+    /* ── GOLD SHIMMER ANIMATION ────────────────────────────────── */
+    @keyframes shimmer {
+      0% { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+    .btn-cta-primary, .btn-academy {
+      position: relative; overflow: hidden;
+      background: linear-gradient(
+        90deg, 
+        rgba(201,169,110,1) 0%, 
+        rgba(226,201,154,1) 45%, 
+        rgba(245,236,216,1) 50%, 
+        rgba(226,201,154,1) 55%, 
+        rgba(201,169,110,1) 100%
+      );
+      background-size: 200% auto;
+      animation: shimmer 6s infinite linear;
+      border: none !important; color: var(--ink) !important;
+    }
+    .btn-cta-primary:hover, .btn-academy:hover {
+      animation-duration: 2.5s;
+      transform: translateY(-2px) scale(1.01);
+      box-shadow: 0 12px 40px rgba(201,169,110,0.4);
+    }
+
+    /* ── LUXURY FAQ (Obsidian Style) ───────────────────────────── */
+    #faq { padding: 120px 0; background: var(--ink); position: relative; }
+    .faq-container { max-width: 850px; margin: 4rem auto 0; display: flex; flex-direction: column; gap: 1.2rem; }
+    .faq-item {
+      background: rgba(10, 9, 6, 0.65);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(201, 169, 110, 0.12);
+      border-radius: var(--radius-md);
+      overflow: hidden; transition: all 0.4s var(--transition);
+    }
+    .faq-header {
+      padding: 2rem 2.5rem; display: flex; justify-content: space-between; align-items: center;
+      cursor: pointer; user-select: none;
+    }
+    .faq-title { font-size: 1.1rem; color: var(--gold-light); font-weight: 500; letter-spacing: 0.02em; }
+    .faq-icon { color: var(--gold); transition: transform 0.4s ease; font-size: 0.7rem; opacity: 0.8; }
+    .faq-body {
+      max-height: 0; padding: 0 2.5rem; overflow: hidden;
+      transition: all 0.5s var(--transition);
+      color: var(--text-muted); font-size: 0.95rem; line-height: 1.8;
+    }
+    .faq-item.active { border-color: var(--gold); background: rgba(201, 169, 110, 0.06); }
+    .faq-item.active .faq-icon { transform: rotate(180deg); }
+    .faq-item.active .faq-body { max-height: 250px; padding-bottom: 2.5rem; }
+
+    /* ── RESPONSIVE ─────────────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      .hero-title { font-size: clamp(3rem, 8vw, 4.5rem); }
+      .services-grid, .academy-grid, .testimonials-grid, .ritual-grid { 
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+      }
+      #authority { grid-template-columns: 1fr; }
+      .authority-visual { height: 480px; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 768px) {
+      body { font-size: 15px; }
+      nav { padding: 1.2rem 6%; }
+      .nav-links { display: none; }
+      #hero { padding: 0 6%; text-align: center; }
+      .hero-actions { flex-direction: column; width: 100%; gap: 1rem; }
+      .btn-primary, .btn-secondary, .btn-academy { width: 100%; justify-content: center; }
+      
+      /* Mobile Obsidian Tweaks */
+      .academy-card.obsidian { border-radius: var(--radius-md); }
+      .ritual-num { font-size: 3rem; }
+      .section-title { font-size: 2.3rem; }
+      .faq-header { padding: 1.5rem 1.8rem; }
+      .faq-body { padding: 0 1.8rem; }
+      .faq-item.active .faq-body { padding-bottom: 1.8rem; }
+      
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .footer-top { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) {
+      .stats-grid { grid-template-columns: 1fr; }
+      .cta-actions { flex-direction: column; align-items: center; }
+    }
+
+    /* ── TRANSFORMATION SECTION ────────────────────────────────── */
+    #transformation {
+      padding: 100px 5vw;
+      background: var(--ink);
+      text-align: center;
+    }
+    .transformation-container {
+      position: relative;
+      max-width: 900px;
+      margin: 0 auto;
+      border: 1px solid var(--glass-border);
+      padding: 2.5px;
+      background: var(--ink-soft);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-gold);
+    }
+    .transformation-container img {
+      width: 100%; height: auto;
+      display: block; border-radius: calc(var(--radius-md) - 2px);
+    }
+    .transformation-label {
+      position: absolute; bottom: 1.5rem; right: 1.5rem;
+      background: rgba(10,9,6,0.85); backdrop-filter: blur(12px);
+      padding: 0.8rem 1.4rem; border-radius: 50px;
+      border: 1px solid var(--gold);
+      color: var(--gold); font-size: 0.72rem; letter-spacing: 0.15em;
+      text-transform: uppercase; font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+      .gate-logo { font-size: 8vw; gap: 4vw; width: 90%; justify-content: center; margin: 0 auto; text-align: center; }
+      .transformation-container { width: 90%; }
+      .transformation-label { bottom: 1rem; right: 50%; transform: translateX(50%); width: 80%; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <!-- ══ ENTRANCE GATE ══════════════════════════════════════════ -->
+  <div id="entrance-gate" aria-hidden="true">
+    <div class="gate-logo">
+      <span class="gate-logo-dot"></span>
+      Just <span>Lash</span>
+    </div>
+  </div>
+
+  <!-- ══ NAVBAR ══════════════════════════════════════════════════ -->
+  <nav id="navbar" role="navigation" aria-label="Navegación principal">
+    <a href="#" class="nav-logo" id="nav-logo-link">
+      <span class="nav-logo-dot"></span>
+      Just <span>Lash</span>
+    </a>
+    <div class="nav-links">
+      <a href="#services" id="nav-services">Maestría</a>
+      <a href="#authority" id="nav-studio">La Academia</a>
+      <a href="#process" id="nav-proceso">El Método</a>
+      <a href="#testimonials" id="nav-artistas">Artistas</a>
+      <a href="#cta" class="btn-nav" id="nav-reserva">Admisión</a>
+    </div>
+  </nav>
+
+  <!-- ══ HERO ════════════════════════════════════════════════════ -->
+  <section id="hero" role="banner">
+    <div class="hero-bg" id="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-overlay-bottom"></div>
+
+    <div class="hero-content">
+      <p class="hero-eyebrow">
+        <span class="hero-eyebrow-line"></span>
+        Elite Artist Academy
+      </p>
+      <h1 class="hero-title">
+        Deja de poner pestañas.<br />
+        Empieza a crear <em>imperios.</em>
+      </h1>
+      <p class="hero-subtitle">
+        Del servicio tradicional a la maestría técnica. Domina las técnicas que te permiten 
+        triplicar tu facturación y posicionarte como una autoridad boutique en la industria de la mirada.
+      </p>
+      <div class="hero-ctas">
+        <a href="https://wa.me/5491100000000?text=Hola%20Just%20Lash,%20deseo%20informaci%C3%B3n%20sobre%20la%20Certificaci%C3%B3n%20Diamante%20para%20elevar%20mi%20carrera"
+           class="btn-primary" id="hero-cta-reserva" target="_blank" rel="noopener noreferrer">
+          ✦ Solicitar Aplicación 2026
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M3 8h10M9 4l4 4-4 4"/>
+          </svg>
+        </a>
+        <a href="#services" class="btn-secondary" id="hero-cta-catalogo">
+          Explorar Formación
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-scroll-hint" aria-hidden="true">
+      <div class="scroll-line"></div>
+      <span>Scroll</span>
+    </div>
+  </section>
+
+  <!-- ══ TRANSFORMATION: ESTÁNDAR DIAMANTE ═══════════════════════ -->
+  <section id="transformation" aria-labelledby="trans-title">
+    <div class="section-eyebrow reveal" style="justify-content: center;">
+      <span class="section-eyebrow-line"></span>
+      Resultados Elite
+      <span class="section-eyebrow-line"></span>
+    </div>
+    <h2 class="section-title reveal reveal-delay-1" id="trans-title">
+      La <em>Transformación</em> Diamante.
+    </h2>
+    <div class="transformation-container reveal reveal-delay-2">
+      <img src="transformacion.png" alt="Transformación Antes y Después - Just Lash Academy" loading="lazy">
+      <div class="transformation-label">Grado Editorial ✦</div>
+    </div>
+  </section>
+
+  <!-- ══ BRAND STRIP ═══════════════════════════════════════════ -->
+  <div id="brand-strip" aria-hidden="true">
+    <div class="strip-track" id="strip-track">
+      <span class="strip-item"><span class="strip-diamond">◆</span> Certificación Internacional</span>
+      <span class="strip-item"><span class="strip-diamond">◆</span> Escala tu Ticket Promedio</span>
+      <span class="strip-item"><span class="strip-diamond">◆</span> Mentoría Personalizada</span>
+      <span class="strip-item"><span class="strip-diamond">◆</span> Materiales de Grado Pro</span>
+      <span class="strip-item"><span class="strip-diamond">◆</span> Liderazgo en la Mirada</span>
+      <span class="strip-item"><span class="strip-diamond">◆</span> Resultados de Alto Valor</span>
+      <span class="strip-item"><span class="strip-diamond">◆</span> Certificación Internacional</span>
+      <span class="strip-item"><span class="strip-diamond">◆</span> Escala tu Ticket Promedio</span>
+      <span class="strip-item"><span class="strip-diamond">◆</span> Mentoría Personalizada</span>
+      <span class="strip-item"><span class="strip-diamond">◆</span> Materiales de Grado Pro</span>
+      <span class="strip-item"><span class="strip-diamond">◆</span> Liderazgo en la Mirada</span>
+      <span class="strip-item"><span class="strip-diamond">◆</span> Resultados de Alto Valor</span>
+    </div>
+  </div>
+
+  <!-- ══ SERVICES ═══════════════════════════════════════════════ -->
+  <section id="services" aria-labelledby="services-title">
+    <div class="services-header">
+      <div class="section-eyebrow reveal">
+        <span class="section-eyebrow-line"></span>
+        Nuestros Estándares de Maestría
+      </div>
+      <h2 class="section-title reveal reveal-delay-1" id="services-title">
+        El Estándar de Oro en<br/><em>Maestría Técnica.</em>
+      </h2>
+      <p class="section-subtitle reveal reveal-delay-2">
+        No enseñamos a poner fibras. Enseñamos la arquitectura ocular que las 
+        clientas VIP están dispuestas a pagar sin negociar.
+      </p>
+    </div>
+
+    <div class="services-grid">
+      <div class="service-card reveal">
+        <div class="service-icon">✦</div>
+        <p class="service-tag">Técnica Base</p>
+        <h3 class="service-name">Classic Architecture 1:1</h3>
+        <p class="service-desc">
+          La base de todo artista de élite. Domina la colocación perfecta, la 
+          retención prolongada y el diseño morfológico analítico que define el lujo.
+        </p>
+      </div>
+
+      <div class="service-card reveal reveal-delay-1">
+        <div class="service-icon">❋</div>
+        <p class="service-tag">Volumen Intermedio</p>
+        <h3 class="service-name">Volume Engineering</h3>
+        <p class="service-desc">
+          Ingeniería de abanicos hechos a mano. Aprende a crear densidad sin 
+          peso y a cobrar por tu precisión técnica y artística.
+        </p>
+      </div>
+
+      <div class="service-card reveal reveal-delay-2">
+        <div class="service-icon">◈</div>
+        <p class="service-tag">Maestría Avanzada</p>
+        <h3 class="service-name">Mega Volume Elite Academy</h3>
+        <p class="service-desc">
+          La cima de la especialización. Aprende a crear abanicos de 8-16D para 
+          un efecto cinematográfico que solo las mejores artistas dominan.
+        </p>
+      </div>
+
+      <div class="service-card reveal reveal-delay-3">
+        <div class="service-icon">⬡</div>
+        <p class="service-tag">Especialización Trend</p>
+        <h3 class="service-name">Wet Look Editorial Master</h3>
+        <p class="service-desc">
+          Domina la técnica más solicitada en pasarelas. Crea el efecto húmedo 
+          perfecto y conviértete en la referencia de estilo en tu ciudad.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ ACADEMY ══════════════════════════════════════════════════ -->
+  <section id="academy" aria-labelledby="academy-title">
+      <div class="academy-header text-center">
+      <div class="section-eyebrow reveal">
+        <span class="section-eyebrow-line"></span>
+        Just Lash Academy
+      </div>
+      <h2 class="section-title reveal reveal-delay-1" id="academy-title">
+        Del Servicio al <em>Imperio.</em>
+      </h2>
+      <p class="section-subtitle reveal reveal-delay-2">
+        Aprende las técnicas que definieron el estándar del lujo. 
+        Certificaciones diseñadas para lashistas que no aceptan menos que la excelencia.
+      </p>
+    </div>
+
+    <div class="academy-grid">
+      <!-- Curso 1: Mega Volume -->
+      <div class="academy-card obsidian reveal">
+        <div class="course-header">
+          <img src="studio.png" alt="Mega Volume Mastery" loading="lazy">
+          <span class="course-badge">Elite Certification</span>
+        </div>
+        <div class="course-content">
+          <p class="course-meta">Formación Avanzada</p>
+          <h3 class="course-title">Mega Volume Execution</h3>
+          <ul class="course-topics">
+            <li class="topic-item"><span class="topic-icon">✦</span> Ingeniería de abanicos 16D peso pluma</li>
+            <li class="topic-item"><span class="topic-icon">✦</span> Protocolos de salud folicular avanzada</li>
+            <li class="topic-item"><span class="topic-icon">✦</span> Mapeo editorial y efectos cinematográficos</li>
+          </ul>
+        </div>
+        <div class="course-footer">
+          <div class="course-details-row">
+            <span class="detail-label">Duración:</span>
+            <span class="detail-value">2 Días Intensivos</span>
+          </div>
+          <div class="course-details-row">
+            <span class="detail-label">Inversión:</span>
+            <span class="detail-value">---</span>
+          </div>
+          <a href="https://wa.me/5491100000000?text=Hola%20Just%20Lash,%20deseo%20informaci%C3%B3n%20sobre%20la%20Certificaci%C3%B3n%20Diamante%20para%20elevar%20mi%20carrera" class="btn-academy" target="_blank" rel="noopener">
+            ✦ Inscribirme Ahora
+          </a>
+        </div>
+      </div>
+
+      <!-- Curso 2: Boutique Business -->
+      <div class="academy-card obsidian reveal reveal-delay-1">
+        <div class="course-header">
+          <img src="hero.png" alt="Boutique Business Mastery" loading="lazy">
+          <span class="course-badge">Business Elite</span>
+        </div>
+        <div class="course-content">
+          <p class="course-meta">Management de Lujo</p>
+          <h3 class="course-title">Boutique Business Mastery</h3>
+          <ul class="course-topics">
+            <li class="topic-item"><span class="topic-icon">✦</span> Arquitectura de precios y rentabilidad</li>
+            <li class="topic-item"><span class="topic-icon">✦</span> Branding de alto impacto para estudios</li>
+            <li class="topic-item"><span class="topic-icon">✦</span> Captación de clientela VIP y fidelización</li>
+          </ul>
+        </div>
+        <div class="course-footer">
+          <div class="course-details-row">
+            <span class="detail-label">Duración:</span>
+            <span class="detail-value">1 Mes Mentoría</span>
+          </div>
+          <div class="course-details-row">
+            <span class="detail-label">Inversión:</span>
+            <span class="detail-value">---</span>
+          </div>
+          <a href="https://wa.me/5491100000000?text=Hola%20Just%20Lash,%20deseo%20informaci%C3%B3n%20sobre%20la%20Certificaci%C3%B3n%20Diamante%20para%20elevar%20mi%20carrera" class="btn-academy" target="_blank" rel="noopener">
+            ✦ Inscribirme Ahora
+          </a>
+        </div>
+      </div>
+
+      <!-- Curso 3: Wet Look masters -->
+      <div class="academy-card obsidian reveal reveal-delay-2">
+        <div class="course-header">
+          <img src="studio.png" alt="Wet Look Masters" loading="lazy">
+          <span class="course-badge">Trend Setters</span>
+        </div>
+        <div class="course-content">
+          <p class="course-meta">Nivel Editorial</p>
+          <h3 class="course-title">Wet Look Masterclass</h3>
+          <ul class="course-topics">
+            <li class="topic-item"><span class="topic-icon">✦</span> Técnica spiky y texturizado editorial</li>
+            <li class="topic-item"><span class="topic-icon">✦</span> Química de adhesivos para retención extrema</li>
+            <li class="topic-item"><span class="topic-icon">✦</span> Fotografía y portafolio de alto valor</li>
+          </ul>
+        </div>
+        <div class="course-footer">
+          <div class="course-details-row">
+            <span class="detail-label">Duración:</span>
+            <span class="detail-value">1 Día Intensivo</span>
+          </div>
+          <div class="course-details-row">
+            <span class="detail-label">Inversión:</span>
+            <span class="detail-value">---</span>
+          </div>
+          <a href="https://wa.me/5491100000000?text=Hola%20Just%20Lash,%20deseo%20informaci%C3%B3n%20sobre%20la%20Certificaci%C3%B3n%20Diamante%20para%20elevar%20mi%20carrera" class="btn-academy" target="_blank" rel="noopener">
+            ✦ Inscribirme Ahora
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ AUTHORITY / STUDIO ════════════════════════════════════ -->
+  <section id="authority" aria-labelledby="authority-title">
+    <div class="authority-visual reveal">
+      <img src="studio.png" alt="Estudio Just Lash — ambiente premium" loading="lazy" />
+      <div class="authority-visual-overlay"></div>
+      <div class="authority-badge">
+        <div class="authority-badge-label">Certificación</div>
+        <div class="authority-badge-value">Grado Médico ✦</div>
+      </div>
+    </div>
+
+    <div class="authority-content">
+      <div class="section-eyebrow reveal">
+        <span class="section-eyebrow-line"></span>
+        Por qué formarte con nosotros
+      </div>
+      <h2 class="section-title reveal reveal-delay-1" id="authority-title">
+        Liderazgo que<br/><em>se enseña.</em>
+      </h2>
+      <p class="section-subtitle reveal reveal-delay-2">
+        No somos solo un estudio. Somos el centro de entrenamiento boutique más 
+        exclusivo del país, donde transformamos técnicos en artistas prestigiosos.
+      </p>
+
+      <div class="stats-grid">
+        <div class="stat-item reveal reveal-delay-1">
+          <div class="stat-number" data-target="250">0</div>
+          <div class="stat-label">Artistas Certificadas</div>
+        </div>
+        <div class="stat-item reveal reveal-delay-2">
+          <div class="stat-number" data-target="15">0</div>
+          <div class="stat-label">Certificaciones Globales</div>
+        </div>
+        <div class="stat-item reveal reveal-delay-3">
+          <div class="stat-number" data-target="3">0</div>
+          <div class="stat-label">Sedes de Entrenamiento</div>
+        </div>
+        <div class="stat-item reveal reveal-delay-4">
+          <div class="stat-number" data-target="300">0</div>
+          <div class="stat-label">% Incremento Facturación Media</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ PROCESS ════════════════════════════════════════════════ -->
+  <section id="process" aria-labelledby="process-title">
+    <div class="text-center reveal" style="margin-bottom: 1rem;">
+      <div class="section-eyebrow">
+        <span class="section-eyebrow-line"></span>
+        Tu Camino al Éxito
+        <span class="section-eyebrow-line"></span>
+      </div>
+      <h2 class="section-title" id="process-title">El Método <em>Boutique.</em></h2>
+      <p class="section-subtitle">
+        Desde los fundamentos hasta el liderazgo de negocio. Un viaje deliberado hacia la maestría.
+      </p>
+    </div>
+
+    <div class="process-steps">
+      <div class="process-step reveal">
+        <div class="step-number">01</div>
+        <h3 class="step-title">Consulta Personalizada</h3>
+        <p class="step-desc">
+          Analizamos tu morfología ocular, tono de piel y estilo de vida para
+          diseñar tu look perfecto.
+        </p>
+      </div>
+      <div class="process-step reveal reveal-delay-1">
+        <div class="step-number">02</div>
+        <h3 class="step-title">Preparación del Canvas</h3>
+        <p class="step-desc">
+          Limpieza profunda y colocación de parches de hidrogel para proteger
+          y relajar el contorno ocular.
+        </p>
+      </div>
+      <div class="process-step reveal reveal-delay-2">
+        <div class="step-number">03</div>
+        <h3 class="step-title">Aplicación Artística</h3>
+        <p class="step-desc">
+          Extensión individual con adhesivo de grado médico, pinzas de precisión
+          y técnica certificada internacionalmente.
+        </p>
+      </div>
+      <div class="process-step reveal reveal-delay-3">
+        <div class="step-number">04</div>
+        <h3 class="step-title">Sellado & Cuidado</h3>
+        <p class="step-desc">
+          Sellamos el adhesivo con nano-mist y te entregamos tu kit de cuidado
+          para maximizar la durabilidad.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ CERTIFICATION RITUAL ════════════════════════════════════ -->
+  <section id="ritual" aria-labelledby="ritual-title">
+    <div class="ritual-header reveal">
+      <div class="section-eyebrow">
+        <span class="section-eyebrow-line"></span>
+        Garantía de Excelencia
+        <span class="section-eyebrow-line"></span>
+      </div>
+      <h2 class="section-title" id="ritual-title">Nuestro Ritual de <em>Certificación.</em></h2>
+      <p class="section-subtitle">
+        Por qué graduarse en Just Lash es el mayor sello de autoridad técnica en la industria.
+      </p>
+    </div>
+
+    <div class="ritual-grid">
+      <div class="ritual-step reveal">
+        <div class="ritual-num">01</div>
+        <h3 class="ritual-title">Mapeo Analítico</h3>
+        <p class="ritual-desc">
+          No usamos plantillas. Creamos arquitectura ocular personalizada basada en la 
+          morfología ósea única de cada rostro.
+        </p>
+        <div class="ritual-connector"></div>
+      </div>
+      <div class="ritual-step reveal reveal-delay-1">
+        <div class="ritual-num">02</div>
+        <h3 class="ritual-title">Ingeniería de Puntos</h3>
+        <p class="ritual-desc">
+          Dominio total de la química de adhesivos y aislamiento quirúrgico para garantizar 
+          retención extrema sin estrés folicular.
+        </p>
+        <div class="ritual-connector"></div>
+      </div>
+      <div class="ritual-step reveal reveal-delay-2">
+        <div class="ritual-num">03</div>
+        <h3 class="ritual-title">Micro-Auditoría</h3>
+        <p class="ritual-desc">
+          Cada set es auditado mediante fotografía macro. Solo la perfección milimétrica 
+          supera nuestra revisión técnica.
+        </p>
+        <div class="ritual-connector"></div>
+      </div>
+      <div class="ritual-step reveal reveal-delay-3">
+        <div class="ritual-num">04</div>
+        <h3 class="ritual-title">Veredicto Elite</h3>
+        <p class="ritual-desc">
+          La certificación final solo se otorga tras demostrar maestría en el Método 
+          Boutique y gestión de negocio de lujo.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ TESTIMONIALS ══════════════════════════════════════════ -->
+  <section id="testimonials" aria-labelledby="testimonials-title">
+    <div class="text-center reveal" style="margin-bottom: 4rem;">
+      <div class="section-eyebrow">
+        <span class="section-eyebrow-line"></span>
+        Alumnas Elite
+        <span class="section-eyebrow-line"></span>
+      </div>
+      <h2 class="section-title" id="testimonials-title">
+        Nuestra Red de <em>Artistas.</em>
+      </h2>
+    </div>
+
+    <div class="testimonials-grid">
+      <div class="magazine-review reveal">
+        <div class="review-source">Elite Artist Review</div>
+        <p class="review-quote">
+          "Just Lash Academy no solo enseña técnica; redefine el estándar del negocio 
+          boutique en Latinoamérica con una precisión quirúrgica."
+        </p>
+        <div class="review-author">Valeria Montoya</div>
+        <div class="review-badge">CERTIFICADA ELITE</div>
+      </div>
+
+      <div class="magazine-review reveal reveal-delay-1">
+        <div class="review-source">Lashista Digest</div>
+        <p class="review-quote">
+          "La arquitectura de su mapeo analítico es lo que separa a una técnica 
+          de una verdadera artista prestigiosa."
+        </p>
+        <div class="review-author">Camila Reyes</div>
+        <div class="review-badge">MASTER GRADUATE</div>
+      </div>
+
+      <div class="magazine-review reveal reveal-delay-2">
+        <div class="review-source">Luxury Beauty Mag</div>
+        <p class="review-quote">
+          "El único lugar donde la obsesión por el detalle se convierte en una 
+          ventaja competitiva rentable y de altísimo estatus."
+        </p>
+        <div class="review-author">Andrea López</div>
+        <div class="review-badge">BUSINESS PARTNER</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ CERTIFICATIONS ════════════════════════════════════════ -->
+  <div id="certifications" aria-label="Certificaciones y sellos de calidad">
+    <div class="cert-grid">
+      <div class="cert-item reveal">
+        <div class="cert-icon">🏆</div>
+        <div class="cert-label">Certificación Internacional</div>
+      </div>
+      <div class="cert-item reveal reveal-delay-1">
+        <div class="cert-icon">✦</div>
+        <div class="cert-label">Casos de Éxito 100%</div>
+      </div>
+      <div class="cert-item reveal reveal-delay-2">
+        <div class="cert-icon">🎓</div>
+        <div class="cert-label">Soporte Post-Curso</div>
+      </div>
+      <div class="cert-item reveal reveal-delay-3">
+        <div class="cert-icon">💎</div>
+        <div class="cert-label">Comunidad Elite</div>
+      </div>
+      <div class="cert-item reveal reveal-delay-4">
+        <div class="cert-icon">📈</div>
+        <div class="cert-label">Rentabilidad Comprobada</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ LUXURY FAQ ══════════════════════════════════════════════ -->
+  <section id="faq" aria-labelledby="faq-title-main">
+    <div class="text-center reveal">
+      <div class="section-eyebrow">
+        <span class="section-eyebrow-line"></span>
+        Dudas Frecuentes
+        <span class="section-eyebrow-line"></span>
+      </div>
+      <h2 class="section-title" id="faq-title-main">Claridad <em>Boutique.</em></h2>
+      <p class="section-subtitle">
+        Resolvemos tus inquietudes para que tu camino a la maestría sea absoluto.
+      </p>
+    </div>
+
+    <div class="faq-container">
+      <div class="faq-item reveal active" aria-expanded="true">
+        <div class="faq-header" role="button" aria-controls="faq-ans-1">
+          <span class="faq-title">¿Qué tan rápido recupero mi inversión?</span>
+          <span class="faq-icon">▼</span>
+        </div>
+        <div class="faq-body" id="faq-ans-1">
+          Nuestras graduadas suelen recuperar el costo total de la certificación en sus primeros 5 a 8 servicios de Mega Volumen. No solo te enseñamos técnica, te enseñamos a cobrar lo que vale tu maestría técnica.
+        </div>
+      </div>
+
+      <div class="faq-item reveal reveal-delay-1" aria-expanded="false">
+        <div class="faq-header" role="button" aria-controls="faq-ans-2">
+          <span class="faq-title">¿El título tiene validez internacional?</span>
+          <span class="faq-icon">▼</span>
+        </div>
+        <div class="faq-body" id="faq-ans-2">
+          Obtendrás un Certificado de Maestría Just Lash Academy, reconocido como el estándar de oro de la industria en CDMX. Nuestra red de artistas es sinónimo de prestigio en cualquier estudio de alto nivel.
+        </div>
+      </div>
+
+      <div class="faq-item reveal reveal-delay-2" aria-expanded="false">
+        <div class="faq-header" role="button" aria-controls="faq-ans-3">
+          <span class="faq-title">¿Qué incluye el Kit Elite de la academia?</span>
+          <span class="faq-icon">▼</span>
+        </div>
+        <div class="faq-body" id="faq-ans-3">
+          Cada alumna recibe un kit profesional con adhesivos de grado médico, pinzas de precisión alemana y acceso de por vida a nuestra comunidad exclusiva de soporte técnico y networking para artistas.
+        </div>
+      </div>
+
+      <div class="faq-item reveal reveal-delay-3" aria-expanded="false">
+        <div class="faq-header" role="button" aria-controls="faq-ans-4">
+          <span class="faq-title">¿Necesito experiencia previa para inscribirme?</span>
+          <span class="faq-icon">▼</span>
+        </div>
+        <div class="faq-body" id="faq-ans-4">
+          Contamos con niveles que van desde Classic Architecture (Iniciación) hasta Mega Volume Mastery (Avanzado). Analizamos tu perfil para ubicarte en el pilar que maximice tu crecimiento actual.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ CLOSING CTA ════════════════════════════════════════════ -->
+  <section id="cta" aria-labelledby="cta-title">
+    <div class="cta-glow" aria-hidden="true"></div>
+    <div class="cta-content">
+      <div class="section-eyebrow reveal" style="justify-content:center; margin-bottom:1.5rem;">
+        <span class="section-eyebrow-line"></span>
+        Comienza Hoy
+        <span class="section-eyebrow-line"></span>
+      </div>
+      <h2 class="cta-title reveal reveal-delay-1" id="cta-title">
+        Tu futuro en la mirada<br />
+        <em>comienza hoy.</em>
+      </h2>
+      <p class="cta-subtitle reveal reveal-delay-2">
+        Solicita tu admisión a la Academia. Las plazas son limitadas para garantizar 
+        una formación absolutamente personalizada y de alto nivel.
+      </p>
+      <div class="cta-actions reveal reveal-delay-3">
+        <a href="https://wa.me/5491100000000?text=Hola%20Just%20Lash,%20deseo%20informaci%C3%B3n%20sobre%20la%20Certificaci%C3%B3n%20Diamante%20para%20elevar%20mi%20carrera"
+           class="btn-cta-primary" id="cta-whatsapp" target="_blank" rel="noopener noreferrer">
+          ✦ &nbsp;Solicitar Aplicación 2026
+        </a>
+        <a href="#services" class="btn-cta-secondary" id="cta-catalogo">
+          Ver Estándares de Maestría
+        </a>
+      </div>
+      <p class="reveal reveal-delay-4" style="margin-top:2.5rem; font-size:0.78rem; color:var(--text-muted); letter-spacing:0.06em;">
+        Respuesta en menos de 2 horas · Lunes a Sábado 9:00–19:00
+      </p>
+    </div>
+  </section>
+
+  <!-- ══ FOOTER ════════════════════════════════════════════════ -->
+  <footer role="contentinfo">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand-name">Just Lash</div>
+        <p class="footer-brand-desc">
+          Boutique especializada en extensiones de pestañas premium.
+          Arte, técnica y lujo en cada sesión.
+        </p>
+      </div>
+      <div>
+        <div class="footer-col-title">Servicios</div>
+        <ul class="footer-col-links">
+          <li><a href="#services">Classic Lash</a></li>
+          <li><a href="#services">Volume Fans</a></li>
+          <li><a href="#services">Mega Volume</a></li>
+          <li><a href="#services">Wet Look</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Estudio</div>
+        <ul class="footer-col-links">
+          <li><a href="#authority">Nuestra historia</a></li>
+          <li><a href="#process">El proceso</a></li>
+          <li><a href="#testimonials">Testimonios</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Contacto</div>
+        <ul class="footer-col-links">
+          <li><a href="https://wa.me/5491100000000?text=Hola%20Just%20Lash,%20quiero%20agendar%20un%20set%20de%20lujo%20y%20vivir%20la%20experiencia%20boutique" target="_blank" rel="noopener">WhatsApp</a></li>
+          <li><a href="https://instagram.com/justlash" target="_blank" rel="noopener">Instagram</a></li>
+          <li><a href="mailto:hola@justlash.mx">hola@justlash.mx</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2026 Just Lash Studio. Todos los derechos reservados.</p>
+      <div class="footer-socials">
+        <a href="#" class="social-link" aria-label="Instagram" id="footer-ig">◈</a>
+        <a href="#" class="social-link" aria-label="TikTok" id="footer-tk">✦</a>
+        <a href="#" class="social-link" aria-label="WhatsApp" id="footer-wa">◉</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ══ JAVASCRIPT ════════════════════════════════════════════ -->
+  <script>
+    /* ── isMounted Guard (PORTAL_CONTRACT compliance) ── */
+    let isMounted = false;
+    const navbar = document.getElementById('navbar');
+    // Simula el ciclo de carga del AuthProvider antes de mostrar el navbar
+    // Nunca usa router.refresh(); el estado se resuelve on client-side mount.
+    window.addEventListener('DOMContentLoaded', () => {
+      requestAnimationFrame(() => {
+        isMounted = true;
+        navbar.classList.add('mounted');
+      });
+    });
+
+    /* ── Navbar scroll state ── */
+    const onScroll = () => {
+      if (!isMounted) return;
+      if (window.scrollY > 60) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    /* ── Hero BG parallax load ── */
+    const heroBg = document.getElementById('hero-bg');
+    const heroImg = new Image();
+    heroImg.onload = () => heroBg.classList.add('loaded');
+    heroImg.src = 'hero.png';
+    heroBg.style.backgroundImage = "url('hero.png')";
+
+    /* ── Intersection Observer — Scroll Reveal ── */
+    const revealEls = document.querySelectorAll('.reveal');
+    const revealObs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          // Once visible, stop observing
+          revealObs.unobserve(entry.target);
+          // Trigger counter if stat
+          const num = entry.target.querySelector('[data-target]');
+          if (num) animateCount(num);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+    revealEls.forEach(el => revealObs.observe(el));
+
+    /* ── Stat counter animation ── */
+    function animateCount(el) {
+      const target = parseInt(el.dataset.target, 10);
+      const suffix = el.dataset.target.includes('+') ? '+' : '';
+      const duration = 1400;
+      const start = performance.now();
+      const update = (now) => {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.floor(eased * target) + (progress === 1 && target >= 100 ? '%' : '');
+        if (progress < 1) requestAnimationFrame(update);
+        else {
+          if (target === 500) el.textContent = '500+';
+          if (target === 100) el.textContent = '100%';
+          if (target === 6) el.textContent = '6+';
+          if (target === 4) el.textContent = '4';
+        }
+      };
+      requestAnimationFrame(update);
+    }
+
+    /* ── Smooth anchor scroll offset for fixed navbar ── */
+    document.querySelectorAll('a[href^="#"]').forEach(link => {
+      link.addEventListener('click', e => {
+        const target = document.querySelector(link.getAttribute('href'));
+        if (target) {
+          e.preventDefault();
+          const offset = 80;
+          const top = target.getBoundingClientRect().top + window.scrollY - offset;
+          window.scrollTo({ top, behavior: 'smooth' });
+        }
+      });
+    });
+
+    /* ── Luxury FAQ Accordion ── */
+    const faqItems = document.querySelectorAll('.faq-item');
+    faqItems.forEach(item => {
+      const header = item.querySelector('.faq-header');
+      header.addEventListener('click', () => {
+        const isActive = item.classList.contains('active');
+        // Close all others and update ARIA
+        faqItems.forEach(other => {
+          other.classList.remove('active');
+          other.setAttribute('aria-expanded', 'false');
+        });
+        // Toggle current
+        if (!isActive) {
+          item.classList.add('active');
+          item.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
+
+    /* ── Cinematic Entrance Gate Logic (FAIL-SAFE 2s) ── */
+    (function() {
+      const gate = document.getElementById('entrance-gate');
+      const heroBg = document.getElementById('hero-bg');
+      if (!gate) return;
+
+      const hideGate = () => {
+        if (gate.classList.contains('hidden')) return;
+        gate.classList.add('hidden');
+        // Forzamos display none tras la animación de 1.2s para evitar bloqueos
+        setTimeout(() => { gate.style.display = 'none'; }, 1300);
+        if (heroBg) heroBg.classList.add('loaded');
+        try { sessionStorage.setItem('justLashGateSeen', 'true'); } catch(e) {}
+      };
+
+      // Si ya se vió en esta sesión, ocultar inmediatamente
+      try {
+        if (sessionStorage.getItem('justLashGateSeen')) {
+          gate.style.display = 'none';
+          if (heroBg) heroBg.classList.add('loaded');
+          return;
+        }
+      } catch(e) {}
+
+      // Disparadores de salida
+      window.addEventListener('load', hideGate);
+      document.addEventListener('DOMContentLoaded', hideGate);
+      // Salida forzada (El Diamante siempre brilla)
+      setTimeout(hideGate, 2000);
+    })();
+  </script>
+</body>
+</html>
