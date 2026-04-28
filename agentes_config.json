@@ -1,0 +1,65 @@
+{
+  "project": "JustLash Academy — Sistema de Agentes AI",
+  "version": "1.0.0",
+  "brand": {
+    "name": "Just Lash Academy & Studio",
+    "location": "A media cuadra del Metro Balbuena, CDMX",
+    "standard": "Diamante",
+    "deposit": 1000,
+    "currency": "MXN",
+    "kit": "Kit de Bienvenida gratuito",
+    "max_group_size": 6,
+    "techniques": ["Clásicas", "Volumen", "Mega Volumen", "Anime", "Koda", "Ruso", "Wet Look"]
+  },
+  "agents": {
+    "qualifier": {
+      "name": "Calificadora Diamante",
+      "role": "Primer contacto. Filtra leads y los segmenta en 1A (Principiante) o 2A (Experta).",
+      "model": "google/gemini-2.0-flash-001",
+      "temperature": 0.7,
+      "max_tokens": 500,
+      "triggers_on_states": ["new", "qualifying"]
+    },
+    "closer": {
+      "name": "Cerradora Diamante",
+      "role": "Convierte el lead calificado en alumna inscrita. Usa principios de Cialdini.",
+      "model": "anthropic/claude-3.5-sonnet",
+      "temperature": 0.6,
+      "max_tokens": 600,
+      "triggers_on_states": ["qualified", "closing"]
+    },
+    "remarketing": {
+      "name": "Reactivadora Diamante",
+      "role": "Re-engancha leads fríos con hook emocional y oferta limitada.",
+      "model": "anthropic/claude-3-haiku",
+      "temperature": 0.8,
+      "max_tokens": 400,
+      "triggers_on_states": ["lost", "remarketing"],
+      "max_attempts": 3,
+      "cadence_hours": [24, 48, 72]
+    }
+  },
+  "routing": {
+    "default_agent": "qualifier",
+    "transitions": {
+      "new": "qualifying",
+      "qualifying": "qualified",
+      "qualified": "closing",
+      "closing": ["converted", "lost"],
+      "lost": "remarketing",
+      "remarketing": ["closing", "dead"]
+    }
+  },
+  "segments": {
+    "1A": {
+      "label": "Principiante",
+      "description": "Sin experiencia previa en pestañas. Busca nueva carrera.",
+      "proof_strategy": "Casos de éxito y ex-alumnas que empezaron desde cero."
+    },
+    "2A": {
+      "label": "Experta",
+      "description": "Ya trabaja con pestañas. Busca especializarse en técnicas de tendencia.",
+      "proof_strategy": "Técnicas exclusivas: Anime, Koda, Ruso, Mega Volumen."
+    }
+  }
+}

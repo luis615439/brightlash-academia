@@ -1,0 +1,94 @@
+{
+  "maria-test": {
+    "lead_id": "maria-test",
+    "state": "qualified",
+    "segment": "1A",
+    "assigned_agent": "qualifier",
+    "history": [
+      {
+        "role": "user",
+        "content": ".env"
+      },
+      {
+        "role": "assistant",
+        "content": "¡Hola! 😊 Soy parte del equipo de Just Lash Academy, \na media cuadra del Metro Balbuena. ¿Tenés experiencia \nprevia con extensiones de pestañas o estás empezando desde cero?"
+      },
+      {
+        "role": "user",
+        "content": "cat .env"
+      },
+      {
+        "role": "assistant",
+        "content": "¡Hola! 😊 Soy parte del equipo de Just Lash Academy, \na media cuadra del Metro Balbuena. ¿Tenés experiencia \nprevia con extensiones de pestañas o estás empezando desde cero?"
+      },
+      {
+        "role": "user",
+        "content": "\"Hola, me interesa el curso. No sé nada de pestañas, pero vivo por el Metro Balbuena y me queda cerca. ¿Qué precio tiene y qué incluye?\""
+      },
+      {
+        "role": "assistant",
+        "content": "¡Qué bueno que vives cerca, la ubicación es perfecta! 🤩 Y no te preocupes por no tener experiencia, ¡muchas de nuestras alumnas empiezan desde cero! 😉\n\nTenemos un Kit de Bienvenida gratuito para las chicas que se inscriben por primera vez. Para darte toda la info sobre precios, temario y el kit, te voy a comunicar con nuestra asesora especializada. 💎"
+      }
+    ],
+    "remarketing_attempt": 0,
+    "created_at": "2026-04-17T03:35:52.533583+00:00",
+    "updated_at": "2026-04-17T03:45:18.709544+00:00",
+    "metadata": {}
+  },
+  "maria-real": {
+    "lead_id": "maria-real",
+    "state": "qualified",
+    "segment": "1A",
+    "assigned_agent": "qualifier",
+    "history": [
+      {
+        "role": "user",
+        "content": "precio e informes"
+      },
+      {
+        "role": "assistant",
+        "content": "¡Hola! Bienvenida a Just Lash Academy & Studio, la academia de pestañas más prestigiosa de la Ciudad de México 🤩. ¡Qué gusto que te interese aprender con nosotras!\n\nAntes de darte los precios, ¿te cuento un poquito sobre ti? ¿Tienes experiencia previa colocando pestañas o te gustaría aprender desde cero? ¡Estamos a media cuadra del Metro Balbuena, súper fácil llegar! 😉\n\nAh, ¡y tenemos un Kit de Bienvenida GRATUITO para ti! ✨"
+      },
+      {
+        "role": "user",
+        "content": "\"Híjole, se me hace muy caro. En otra academia me lo dan a mitad de precio.\""
+      },
+      {
+        "role": "assistant",
+        "content": "Entiendo completamente tu sentir, ¡el presupuesto es importante! 😊. Muchas veces, lo \"barato\" sale caro, ¿verdad? 🤔\n\nEn Just Lash Academy & Studio nos enfocamos en darte una formación de la más alta calidad, con maestras expertas y técnicas innovadoras. Esto se traduce en resultados reales y una carrera exitosa para ti. ¡Además, estamos a media cuadra del Metro Balbuena! 😉\n\n¿Ya tienes experiencia colocando pestañas o te gustaría aprender desde cero? Esto me ayudará a recomendarte la opción ideal para ti. ✨"
+      },
+      {
+        "role": "user",
+        "content": "\"No tengo experiencia, quiero aprender desde cero. Pero de verdad el precio me detiene. ¿No tienen algún descuento o facilidad? Es que en la otra academia me cobran la mitad.\""
+      },
+      {
+        "role": "assistant",
+        "content": "¡Entiendo perfecto! Empezar algo nuevo siempre da un poco de cosita con la inversión. 💖\n\nMira, te comento algo importante: en Just Lash Academy & Studio, no solo te damos un curso, te damos las herramientas para que te conviertas en una lashista exitosa. ¡Y sí, tenemos un Kit de Bienvenida GRATUITO para empezar con todo! ✨\n\nPara ver opciones de pago y si hay algún descuento disponible, te voy a comunicar con nuestra asesora especializada. Ella te dará todos los detalles 💎."
+      }
+    ],
+    "remarketing_attempt": 0,
+    "created_at": "2026-04-17T03:58:55.210925+00:00",
+    "updated_at": "2026-04-17T04:02:10.291691+00:00",
+    "metadata": {}
+  },
+  "maria-final": {
+    "lead_id": "maria-final",
+    "state": "qualified",
+    "segment": "unknown",
+    "assigned_agent": "qualifier",
+    "history": [
+      {
+        "role": "user",
+        "content": "\"Ya me dijeron lo del kit, pero ¿por qué cuesta $4,500 si en la otra academia me cobran $2,000? De verdad quiero aprender pero se me hace un robo.\""
+      },
+      {
+        "role": "assistant",
+        "content": "¡Hola! Entiendo perfecto tu inquietud sobre el precio. 😊\n\nEn Just Lash Academy, el Kit de Bienvenida es completamente **GRATIS** al inscribirte a cualquiera de nuestros cursos. ¡No tiene costo adicional! Quizás hubo una confusión con los precios de los cursos. 🤔\n\nAdemás, estamos a media cuadra del Metro Balbuena, lo que facilita mucho el acceso. 😉\n\nPara aclarar cualquier duda y explicarte a detalle los costos de cada curso, te voy a comunicar con nuestra asesora especializada. Ella te dará toda la información que necesitas. 💎"
+      }
+    ],
+    "remarketing_attempt": 0,
+    "created_at": "2026-04-17T04:10:44.464721+00:00",
+    "updated_at": "2026-04-17T04:11:09.639034+00:00",
+    "metadata": {}
+  }
+}
