@@ -253,6 +253,15 @@ class OpenRouterClient:
                 resp.raise_for_status()
                 data = resp.json()
 
+                if "error" in data:
+                    error_msg = data["error"].get("message", "Error sin mensaje")
+                    error_code = data["error"].get("code", 500)
+                    resp.status_code = error_code if isinstance(error_code, int) else 500
+                    raise requests.exceptions.HTTPError(
+                        f"OpenRouter Error {error_code}: {error_msg}",
+                        response=resp
+                    )
+
                 content = data["choices"][0]["message"]["content"]
                 tokens = data.get("usage", {}).get("total_tokens", 0)
                 return content, tokens
@@ -260,17 +269,20 @@ class OpenRouterClient:
             except requests.exceptions.HTTPError as e:
                 status = e.response.status_code if e.response else "?"
                 last_error = f"HTTP {status}: {e.response.text if e.response else str(e)}"
+                if status == 429:
+                    last_error = "Límite de peticiones de OpenRouter alcanzado o falta de créditos. Por favor, revisa tu cuenta."
+                    break
                 if status in (401, 403, 422):
                     break  # No reintentar en errores de auth o payload
                 if attempt < retries:
-                    time.sleep(1.5 ** attempt)
+                    time.sleep(2 ** attempt)
 
             except requests.exceptions.RequestException as e:
                 last_error = str(e)
                 if attempt < retries:
-                    time.sleep(1.5 ** attempt)
+                    time.sleep(2 ** attempt)
 
-        raise RuntimeError(f"OpenRouter falló después de {retries + 1} intentos: {last_error}")
+        raise RuntimeError(f"Fallo en Comunicación Diamante: {last_error}")
 
 
 # ============================================================================
@@ -395,15 +407,15 @@ class AgentRouter:
         # Default → QUALIFIER (new, qualifying)
         return get_agent(AgentType.QUALIFIER)
 
-    def respond(self, lead_id: str, message: str) -> RouterResponse:
+    def respond(self, lead_id: str, message: str, script_context: str = None) -> RouterResponse:
         """
         Punto de entrada principal. Recibe un mensaje de un lead y
         retorna la respuesta del agente correcto.
-
-        Garantías:
-        - Si state == QUALIFIED → SIEMPRE responde el CLOSER
-        - Same-turn handoff: si el Qualifier clasifica, el Closer responde
-          en el mismo turno (sin vuelta extra al Qualifier)
+        
+        Args:
+            lead_id: Identificador único del lead.
+            message: Mensaje enviado por el usuario.
+            script_context: Nombre del archivo de guion (opcional) para inyectar contexto.
         """
         # 1. Obtener o crear el lead
         lead, is_new = self.store.get_or_create(lead_id)
@@ -437,7 +449,7 @@ class AgentRouter:
         lead.assigned_agent = agent.agent_type.value
 
         # 6. Obtener respuesta del agente seleccionado
-        response_text, tokens = self._get_response(agent, lead)
+        response_text, tokens = self._get_response(agent, lead, script_context)
 
         # 7. Detectar transiciones en la respuesta
         transitions = self.detector.detect(response_text, lead.lead_state)
@@ -464,7 +476,7 @@ class AgentRouter:
         ):
             final_agent = get_agent(AgentType.CLOSER, segment=lead.segment or "1A")
             lead.assigned_agent = final_agent.agent_type.value
-            closer_text, closer_tokens = self._get_response(final_agent, lead)
+            closer_text, closer_tokens = self._get_response(final_agent, lead, script_context)
             # Reemplazar la respuesta del Qualifier por la del Closer
             response_text = closer_text
             tokens += closer_tokens
@@ -494,12 +506,29 @@ class AgentRouter:
             tokens_used=tokens,
         )
 
-    def _get_response(self, agent: Agent, lead: Lead) -> tuple[str, int]:
-        """Obtiene la respuesta del agente (real o simulada)."""
+    def _get_response(self, agent: Agent, lead: Lead, script_context: str = None) -> tuple[str, int]:
+        """Obtiene la respuesta del agente (real o simulada) con contexto opcional de guion."""
         if self.dry_run:
             return self._dry_run_response(agent, lead), 0
 
         messages = agent.build_messages(lead.history)
+        
+        # INYECCIÓN DE GUION (Si se solicita)
+        if script_context:
+            try:
+                script_path = Path("/Volumes/IA_LAB_DAT/PORTAL_DE_CRISTAL/RECURSOS_VENTAS") / script_context
+                if script_path.exists():
+                    with open(script_path, "r", encoding="utf-8") as f:
+                        script_content = f.read()
+                    # Insertar guion como instrucción de sistema prioritaria
+                    messages.insert(1, {
+                        "role": "system", 
+                        "content": f"GUION MAESTRO DE VENTAS (Sigue estas directrices):\n\n{script_content}"
+                    })
+                    print(f"DEBUG: Script '{script_context}' inyectado exitosamente.")
+            except Exception as e:
+                print(f"WARNING: No se pudo inyectar el script: {e}")
+
         params = agent.to_api_params()
 
         return self.client.complete(
@@ -510,33 +539,39 @@ class AgentRouter:
         )
 
     def _dry_run_response(self, agent: Agent, lead: Lead) -> str:
-        """Genera una respuesta simulada para dry-run."""
+        """Genera una respuesta simulada inteligente para pruebas sin API Key."""
         last_user_msg = next(
             (m["content"] for m in reversed(lead.history) if m["role"] == "user"),
-            "",
-        )
-        templates = {
-            AgentType.QUALIFIER: (
+            ""
+        ).lower()
+
+        if agent.agent_type == AgentType.QUALIFIER:
+            if "1a" in last_user_msg or "principiante" in last_user_msg or "cero" in last_user_msg:
+                return "¡Excelente! 💎 Para una principiante como tú, el Kit de Bienvenida es clave. Te derivo con mi compañera para cerrar tu lugar.\n[CLASIFICACIÓN: 1A] [DERIVAR: CLOSER]"
+            if "2a" in last_user_msg or "experta" in last_user_msg or "ya se" in last_user_msg:
+                return "¡Magnífico! 👑 Una experta apreciará nuestras técnicas de tendencia. Te paso con el área de cierre para asegurar tu lugar.\n[CLASIFICACIÓN: 2A] [DERIVAR: CLOSER]"
+            
+            return (
                 f"¡Hola! 😊 Soy parte del equipo de Just Lash Academy, \n"
-                f"a media cuadra del Metro Balbuena. ¿Tienes experiencia \n"
-                f"previa con extensiones de pestañas o estás empezando desde cero?\n"
+                f"a media cuadra del Metro Balbuena. Tu curso incluye un \n"
+                f"Kit de Bienvenida de lujo gratis. ¿Tienes experiencia \n"
+                f"previa con pestañas o empezamos de cero?\n"
                 f"[CLASIFICACIÓN: PENDIENTE]"
-            ),
-            AgentType.CLOSER: (
-                f"¡Perfecto! 💎 Te cuento que tenemos solo 6 lugares por \n"
-                f"grupo y quedan 2 disponibles para este mes. Con $1,000 de \n"
-                f"apartado aseguras tu lugar. Una vez que termines el curso, \n"
-                f"con 2 clientas ya recuperas la inversión completa. ¿Te agendo?\n"
+            )
+
+        if agent.agent_type == AgentType.CLOSER:
+            if "apartado" in last_user_msg or "mil" in last_user_msg or "1000" in last_user_msg or "si" in last_user_msg:
+                return "¡Felicidades! 💎 Has tomado la mejor decisión. Tu lugar está asegurado. Nos vemos en Metro Balbuena para iniciar tu transformación.\n[ESTADO: CONVERTED]"
+            
+            return (
+                f"¡Perfecto! 💎 Te cuento que tenemos solo 3 lugares \n"
+                f"disponibles para este mes. Con $1,000 de \n"
+                f"apartado aseguras tu lugar hoy mismo. ¿Prefieres asegurar \n"
+                f"tu lugar hoy o entrar a lista de espera?\n"
                 f"[ESTADO: CLOSING]"
-            ),
-            AgentType.REMARKETING: (
-                f"¡Hola! 😊 Solo quería ver si te quedó alguna duda. \n"
-                f"Esta semana se inscribieron 3 alumnas nuevas y una me dijo \n"
-                f"que casi no se animaba, jaja. ¿Qué te frenó?\n"
-                f"[INTENTO: 1/3]"
-            ),
-        }
-        return templates.get(agent.agent_type, "[DRY-RUN: Sin respuesta]")
+            )
+
+        return "[DRY-RUN: Respuesta de sistema JustLash]"
 
     def reset_lead(self, lead_id: str) -> bool:
         """Reinicia el estado de un lead (útil para testing)."""

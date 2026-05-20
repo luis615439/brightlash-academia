@@ -1,14 +1,53 @@
 # System files
 .DS_Store
 Thumbs.db
-
-# Agent files
-.DS_Store
 *.log
-.claudignore
+*.zip
 
-# Build files
+# Dependencies
+node_modules/
+jspm_packages/
+.openclaw_env/
+venv/
+.venv/
+env/
+.env/
+bin/
+lib/
+share/
+
+# Build and IDE
 dist/
 build/
 .next/
 .vercel
+.cache/
+.eslintcache
+.stylelintcache
+.parcel-cache
+.turbo
+out/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env.bak/
+venv.bak/
+
+# Secrets
+.env
+.env.local
+.env.production
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Databases & Vector Indexes
+*.db
+*.db-journal
+*.faiss
+*.pkl
+
