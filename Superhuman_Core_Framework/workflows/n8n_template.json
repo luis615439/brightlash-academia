@@ -1,0 +1,117 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "generic-audit-alert",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [100, 240]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.action }}",
+                    "rightValue": "PAUSAR",
+                    "operator": "equals"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputLabel": "Alerta Roja (Pausar)"
+            }
+          ]
+        }
+      },
+      "id": "switch-action",
+      "name": "Switch Action",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [320, 240]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.tu-servicio-de-anuncios.com/v1/campaigns/{{ $json.body.campaign_id || 'ID_CAMPAÑA' }}/status",
+        "sendBody": true,
+        "bodyValues": {
+          "parameters": [
+            {
+              "name": "status",
+              "value": "PAUSED"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "api-action-pause",
+      "name": "API Pause Action",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [560, 180]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.tu-servicio-de-mensajeria.com/v1/send",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"to\": \"admin@tu-dominio.com\", \"message\": \"⚠️ *ALERTA DE AUDITORÍA* ⚠️\\n\\nEl Auditor de Métricas ha determinado pausar la campaña debido a desviación en costos operativos.\\n\\n*Detalles:*\\n• Costo por Conversión: ${{ $('Webhook Trigger').item.json.body.cost_per_conversion }}\\n• Límite: ${{ $('Webhook Trigger').item.json.body.limit_threshold }}\\n\\nMensaje: {{ $('Webhook Trigger').item.json.body.alert_message }}\"}"
+      },
+      "id": "notification-alert",
+      "name": "Notification Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [800, 180]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "switch-action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "switch-action": {
+      "main": [
+        [
+          {
+            "node": "api-action-pause",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "api-action-pause": {
+      "main": [
+        [
+          {
+            "node": "notification-alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
