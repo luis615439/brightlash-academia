@@ -1,0 +1,20 @@
+[
+  {
+    "id": "ad_001",
+    "campaign_name": "Wet Look Masterclass Launch",
+    "product_type": "servicios",
+    "headline": "Domina el Wet Look. Duplica tus ingresos como Lashista.",
+    "body": "¿Te cuesta llenar tu agenda o cobrar lo que realmente vale tu trabajo? La técnica Wet Look es la más buscada del año. Domina el efecto tendencia en nuestra Masterclass exclusiva. Aprende retención perfecta, mapeo avanzado y estrategias de cobro premium. Cupos limitados para garantizar aprendizaje personalizado.",
+    "cta": "Registrarse",
+    "status": "active_winning"
+  },
+  {
+    "id": "ad_002",
+    "campaign_name": "Premium Lash Kit Promo",
+    "product_type": "ropa",
+    "headline": "El Kit de Pestañas Premium que las profesionales eligen.",
+    "body": "Eleva el estándar de tus aplicaciones con fibra de seda ultra-ligera y adhesivo de retención extrema de 6 semanas. Todo lo que necesitás para crear miradas impactantes y retención blindada en un solo kit de lujo. Envío gratis a todo México por lanzamiento.",
+    "cta": "Comprar ahora",
+    "status": "proven_winner"
+  }
+]

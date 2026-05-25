@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import json
@@ -26,6 +26,11 @@ class AdCopyRequest(BaseModel):
     budgetDaily: float
     salesGoal: str
     productType: str
+
+class CampaignMetrics(BaseModel):
+    total_spend: float
+    total_leads: int
+    ticket_price: float
 
 def get_agent_filename(agent_id: str) -> str:
     file_map = {
@@ -198,6 +203,35 @@ Devuelve el JSON crudo."""
             except Exception:
                 detail = response.text
         raise HTTPException(status_code=502, detail=f"Gemini API error: {detail}")
+
+@app.post("/api/audit-campaign-performance")
+async def audit_performance(metrics: CampaignMetrics, x_api_key: str = Header(...)):
+    # 1. Validación de seguridad
+    api_key_secret = os.environ.get("SUPERHUMAN_API_KEY", "TU_API_KEY_SECRETA_AQUI")
+    if x_api_key != api_key_secret:
+        raise HTTPException(status_code=403, detail="Acceso denegado")
+    
+    # 2. Lógica del Auditor
+    cpl_actual = metrics.total_spend / metrics.total_leads if metrics.total_leads > 0 else metrics.total_spend
+    limit_75 = metrics.ticket_price * 0.75
+    
+    # Determinación de estado
+    status = "VERDE" if cpl_actual < (metrics.ticket_price * 0.5) else ("AMARILLO" if cpl_actual < limit_75 else "ROJO")
+    
+    # Mensajes del protocolo
+    alerts = {
+        "ROJO": "¡ADVERTENCIA! El CPL ha superado el límite de seguridad (75%). Pausar campaña inmediatamente para evitar pérdida de margen.",
+        "AMARILLO": "Precaución. La campaña está en el límite operativo. Optimizar creativos o segmentación en las próximas 24 horas.",
+        "VERDE": "Saludable. Rendimiento óptimo. Mantener presupuesto y considerar un escalado gradual del 10%."
+    }
+    
+    return {
+        "status": status,
+        "cpl_actual": cpl_actual,
+        "limit_75": limit_75,
+        "alert_message": alerts[status],
+        "action": "PAUSAR" if status == "ROJO" else "MANTENER/ESCALAR"
+    }
 
 @app.get("/api/status")
 async def get_status():
