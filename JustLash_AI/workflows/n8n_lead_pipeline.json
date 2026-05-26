@@ -1,0 +1,265 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "justlash-lead-webhook",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "WhatsApp Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [100, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://localhost:8000/api/chat",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"lead_id\": \"{{ $json.body.lead_id || $json.body.from }}\",\n  \"message\": \"{{ $json.body.message || $json.body.text }}\"\n}",
+        "options": {}
+      },
+      "id": "agentrouter-api-call",
+      "name": "AgentRouter API Call",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [320, 300]
+      },
+      {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.state_after }}",
+                    "rightValue": "^(qualifying|evaluating|closing)$",
+                    "operator": "regex"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputLabel": "Calificación en Progreso"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.state_after }}",
+                    "rightValue": "lost",
+                    "operator": "equals"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputLabel": "Lead Perdido (Retirada)"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.state_after }}",
+                    "rightValue": "converted",
+                    "operator": "equals"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputLabel": "Lead Convertido (Inscrito)"
+            }
+          ]
+        }
+      },
+      "id": "switch-state-transition",
+      "name": "Switch State Transition",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [560, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.tu-servicio-whatsapp.com/v1/messages",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"to\": \"{{ $('AgentRouter API Call').item.json.lead_id }}\", \"text\": \"{{ $('AgentRouter API Call').item.json.message }}\"}",
+        "options": {}
+      },
+      "id": "whatsapp-send-agent-msg",
+      "name": "WhatsApp: Send Agent Msg",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [820, 160]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://tu-supabase-project.supabase.co/rest/v1/leads",
+        "authentication": "predefined",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"lead_status\": \"RECHAZADO\", \"resumen_verificacion\": \"Filtro de compromiso no superado (Retirada estratégica aplicada).\"}",
+        "options": {
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "phone",
+                "value": "=eq.{{ $('AgentRouter API Call').item.json.lead_id }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "supabase-update-lost",
+      "name": "Supabase: Update Lost",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [820, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.tu-servicio-whatsapp.com/v1/messages",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"to\": \"{{ $('AgentRouter API Call').item.json.lead_id }}\", \"text\": \"{{ $('AgentRouter API Call').item.json.message }}\"}",
+        "options": {}
+      },
+      "id": "whatsapp-send-lost-msg",
+      "name": "WhatsApp: Send Lost Msg",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1040, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://tu-supabase-project.supabase.co/rest/v1/leads",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"lead_status\": \"INSCRITO\", \"perfil_aspirante\": \"{{ $('AgentRouter API Call').item.json.segment == '1A' ? 'Principiante absoluto' : 'Experta' }}\", \"compromiso_practica\": true, \"disponibilidad_estricta\": true, \"resumen_verificacion\": \"Compromiso y puntualidad militar aceptados. Apartado pendiente.\"}",
+        "options": {
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "phone",
+                "value": "=eq.{{ $('AgentRouter API Call').item.json.lead_id }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "supabase-update-converted",
+      "name": "Supabase: Update Converted",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [820, 460]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.tu-servicio-whatsapp.com/v1/messages",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"to\": \"{{ $('AgentRouter API Call').item.json.lead_id }}\", \"text\": \"{{ $('AgentRouter API Call').item.json.message }}\"}",
+        "options": {}
+      },
+      "id": "whatsapp-send-converted-msg",
+      "name": "WhatsApp: Send Converted Msg",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1040, 460]
+    }
+  ],
+  "connections": {
+    "WhatsApp Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "agentrouter-api-call",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "agentrouter-api-call": {
+      "main": [
+        [
+          {
+            "node": "switch-state-transition",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "switch-state-transition": {
+      "main": [
+        [
+          {
+            "node": "whatsapp-send-agent-msg",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "supabase-update-lost",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "supabase-update-converted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "supabase-update-lost": {
+      "main": [
+        [
+          {
+            "node": "whatsapp-send-lost-msg",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "supabase-update-converted": {
+      "main": [
+        [
+          {
+            "node": "whatsapp-send-converted-msg",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {},
+  "meta": {
+    "instanceId": "justlash-n8n-instance-id"
+  }
+}
