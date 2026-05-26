@@ -63,7 +63,7 @@ class Lead:
     lead_id: str
     state: str = LeadState.NEW.value
     segment: str = Segment.UNKNOWN.value
-    assigned_agent: str = AgentType.QUALIFIER.value
+    assigned_agent: str = AgentType.ANFITRION.value
     history: list = field(default_factory=list)
     remarketing_attempt: int = 0
     created_at: str = field(
@@ -379,21 +379,20 @@ class AgentRouter:
 
     def _select_agent(self, lead: Lead) -> Agent:
         """
-        Selección de agente con reglas explícitas e irrompibles.
-        QUALIFIED y CLOSING → CLOSER. Siempre. Sin excepciones.
+        Selección de agente con reglas de ruteo del Delegation Harness.
         """
         state = lead.lead_state
 
-        # ✅ Regla absoluta: si el estado es QUALIFIED o CLOSING, el CLOSER responde
-        if state in (LeadState.QUALIFIED, LeadState.CLOSING):
+        if state in (LeadState.NEW, LeadState.QUALIFYING):
+            return get_agent(AgentType.ANFITRION)
+        elif state in (LeadState.QUALIFIED, LeadState.EVALUATING):
+            return get_agent(AgentType.CONSULTOR)
+        elif state in (LeadState.CLOSING,):
             return get_agent(AgentType.CLOSER, segment=lead.segment or "1A")
-
-        # ✅ Remarketing → REMARKETING siempre
-        if state in (LeadState.LOST, LeadState.REMARKETING):
+        elif state in (LeadState.LOST, LeadState.REMARKETING):
             return get_agent(AgentType.REMARKETING)
 
-        # Default → QUALIFIER (new, qualifying)
-        return get_agent(AgentType.QUALIFIER)
+        return get_agent(AgentType.ANFITRION)
 
     def respond(self, lead_id: str, message: str) -> RouterResponse:
         """
@@ -453,25 +452,8 @@ class AgentRouter:
         if transitions["attempt"] is not None:
             lead.remarketing_attempt = transitions["attempt"]
 
-        # 8. SAME-TURN HANDOFF
-        # Si el Qualifier acaba de clasificar (estado pasó a QUALIFIED),
-        # descartamos su respuesta y llamamos al Closer directamente.
-        # El lead ve solo la respuesta del Closer — sin "turno de transición".
+        # 8. SAME-TURN HANDOFF (Desactivado para permitir flujo conversacional progresivo de 3 agentes)
         final_agent = agent
-        if (
-            agent.agent_type == AgentType.QUALIFIER
-            and lead.lead_state == LeadState.QUALIFIED
-        ):
-            final_agent = get_agent(AgentType.CLOSER, segment=lead.segment or "1A")
-            lead.assigned_agent = final_agent.agent_type.value
-            closer_text, closer_tokens = self._get_response(final_agent, lead)
-            # Reemplazar la respuesta del Qualifier por la del Closer
-            response_text = closer_text
-            tokens += closer_tokens
-            # Re-detectar transiciones en la respuesta del Closer
-            closer_transitions = self.detector.detect(closer_text, lead.lead_state)
-            if closer_transitions["new_state"] and closer_transitions["new_state"] != lead.lead_state:
-                lead.state = closer_transitions["new_state"].value
 
         # 9. Limpiar marcadores internos
         clean_response = self.detector.clean_response(response_text)
@@ -514,29 +496,93 @@ class AgentRouter:
         last_user_msg = next(
             (m["content"] for m in reversed(lead.history) if m["role"] == "user"),
             "",
-        )
-        templates = {
-            AgentType.QUALIFIER: (
-                f"¡Hola! 😊 Soy parte del equipo de Just Lash Academy, \n"
-                f"a media cuadra del Metro Balbuena. ¿Tienes experiencia \n"
-                f"previa con extensiones de pestañas o estás empezando desde cero?\n"
-                f"[CLASIFICACIÓN: PENDIENTE]"
-            ),
-            AgentType.CLOSER: (
-                f"¡Perfecto! 💎 Te cuento que tenemos solo 6 lugares por \n"
-                f"grupo y quedan 2 disponibles para este mes. Con $1,000 de \n"
-                f"apartado aseguras tu lugar. Una vez que termines el curso, \n"
-                f"con 2 clientas ya recuperas la inversión completa. ¿Te agendo?\n"
-                f"[ESTADO: CLOSING]"
-            ),
-            AgentType.REMARKETING: (
-                f"¡Hola! 😊 Solo quería ver si te quedó alguna duda. \n"
-                f"Esta semana se inscribieron 3 alumnas nuevas y una me dijo \n"
-                f"que casi no se animaba, jaja. ¿Qué te frenó?\n"
-                f"[INTENTO: 1/3]"
-            ),
-        }
-        return templates.get(agent.agent_type, "[DRY-RUN: Sin respuesta]")
+        ).lower()
+
+        # Detectar si el Consultor ya dio su frase de entrada
+        consultant_responses = [
+            m for m in lead.history 
+            if m["role"] == "assistant" and "¿te gustaría saber si aplicas para el proceso de selección?" in m["content"]
+        ]
+
+        # Detectar si Sofía ya dio la bienvenida
+        sofia_responses = [
+            m for m in lead.history 
+            if m["role"] == "assistant" and "cuéntame: ¿este sería tu primer paso" in m["content"].lower()
+        ]
+
+        if agent.agent_type == AgentType.ANFITRION:
+            if not sofia_responses:
+                return (
+                    "¡Hola! ✨ Qué gusto que nos escribas a JUST LASH. Soy Sofía y estoy aquí para guiarte. \n"
+                    "Te comparto de regalo nuestra Guía Rápida de Visajismo para ir conociendo el arte de la mirada. 💖\n"
+                    "Cuéntame: ¿Este sería tu primer paso en la belleza o ya tienes experiencia en pestañas?\n"
+                    "[CLASIFICACIÓN: PENDIENTE]"
+                )
+            else:
+                if any(w in last_user_msg for w in ["cero", "primer", "no tengo", "ninguna", "principiante"]):
+                    return (
+                        "¡Buenísimo! Te paso con mi compañera Mariana para evaluar tu perfil.\n"
+                        "[CLASIFICACIÓN: 1A]\n"
+                        "[DERIVAR: CONSULTOR]"
+                    )
+                elif any(w in last_user_msg for w in ["experiencia", "tengo", "ya trabajo", "hace", "experta"]):
+                    return (
+                        "¡Excelente! Te paso con mi compañera Mariana.\n"
+                        "[CLASIFICACIÓN: 2A]\n"
+                        "[DERIVAR: CONSULTOR]"
+                    )
+                else:
+                    return (
+                        "Entendido, nena. Pero cuéntame un poquito: ¿ya tienes algo de experiencia o empezamos de cero?\n"
+                        "[CLASIFICACIÓN: PENDIENTE]"
+                    )
+        
+        elif agent.agent_type == AgentType.CONSULTOR:
+            if not consultant_responses:
+                # Primer contacto del Consultor (Frase de Entrada)
+                return (
+                    "¡Me encanta tu entusiasmo por iniciar! Aquí en JustLash formamos a las mejores diseñadoras de mirada desde cero, no necesitas experiencia. "
+                    "Pero nuestro programa es súper riguroso porque cuidamos mucho el prestigio de la marca... "
+                    "Antes de pasarte costos y el plan detallado, ¿te gustaría saber si aplicas para el proceso de selección? Son dos preguntitas rápidas.\n"
+                    "[ESTADO: EVALUATING]"
+                )
+            else:
+                # Seguimiento: evaluar si hay flojera o evasión de costos
+                if any(w in last_user_msg for w in ["cuanto", "cuesta", "precio", "costo", "info", "pasa"]):
+                    # Retirada estratégica adaptada
+                    return (
+                        "Mira, te soy muy honesto: en JustLash no vendemos cursos en masa. Exigimos puntualidad estricta y compromiso de práctica real "
+                        "después de las clases para darte la certificación. Si solo buscas un curso rápido para salir del paso, honestamente este no es el lugar ideal para ti. "
+                        "¿Quieres que te avise si abrimos algún taller más ligero o prefieres dejarlo así?\n"
+                        "[ESTADO: LOST]"
+                    )
+                else:
+                    # Efecto Justificación
+                    return (
+                        "¡Eso es! Ese es el compromiso que buscamos aquí. Déjame mostrarte con orgullo nuestro plan detallado y los costos...\n"
+                        "[ESTADO: CLOSING]\n"
+                        "[DERIVAR: CLOSER]"
+                    )
+        
+        elif agent.agent_type == AgentType.CLOSER:
+            return (
+                "Excelente. Perfil aprobado para el Curso Inicial ($5,500 MXN en Metro Balbuena).\n"
+                "Para asegurar tu lugar con $1,000 MXN, firmamos nuestras tres cláusulas de oro:\n"
+                "1. Asistencia militar (puntualidad).\n"
+                "2. Progresión obligatoria (dominar clásica para avanzar).\n"
+                "3. Prácticas obligatorias post-curso para diploma.\n"
+                "¿Aceptas estos términos? ¿Prefieres transferencia o link de pago?\n"
+                "[ESTADO: CLOSING]"
+            )
+        
+        elif agent.agent_type == AgentType.REMARKETING:
+            return (
+                "¡Hola! 😊 Solo quería ver si te quedó alguna duda. \n"
+                "Esta semana se inscribieron 3 alumnas nuevas. ¿Qué te frenó?\n"
+                "[INTENTO: 1/3]"
+            )
+
+        return "[DRY-RUN: Sin respuesta]"
 
     def reset_lead(self, lead_id: str) -> bool:
         """Reinicia el estado de un lead (útil para testing)."""

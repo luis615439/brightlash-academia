@@ -7,6 +7,11 @@ Thumbs.db
 *.log
 .claudignore
 
+# Secrets
+.env
+.env.local
+.env.production
+
 # Build files
 dist/
 build/

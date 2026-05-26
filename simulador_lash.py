@@ -94,6 +94,13 @@ PERFILES_1A = [
         "contexto": "Influencer pequeña en Instagram. Quiere aprender pestañas para hacérselas ella misma y a sus amigas.",
         "personalidad": "Entusiasta, visual, quiere resultados rápidos."
     },
+    {
+        "nombre": "Valeria Gómez",
+        "edad": 25,
+        "tipo": "1A (Principiante)",
+        "contexto": "Vio el anuncio del curso 'Lash Artist Pro' en Polanco. Le interesa, pero su prima encontró uno más barato en el centro y está dudando de la inversión.",
+        "personalidad": "Busca el mejor precio, escéptica pero susceptible a argumentos de valor y retorno de inversión."
+    },
 ]
 
 PERFILES_2A = [
@@ -263,13 +270,22 @@ elif st.session_state.fase == "practica":
         st.session_state.historial.append({"role": "user", "content": prompt})
 
         # Respuesta simulada del lead
-        respuestas = [
-            f"Hmm interesante, cuéntame más sobre los cursos.",
-            f"¿Y dónde queda exactamente?",
-            f"¿Qué incluye? ¿Cuánto cuesta?",
-            f"Suena bien, pero ¿cómo sé que es diferente a otras academias?",
-            f"OK me interesa, ¿cómo le hago?",
-        ]
+        if perfil["nombre"] == "Valeria Gómez":
+            respuestas = [
+                f"Hola, me interesa el Lash Artist Pro, pero vi que están en Polanco. ¿No tienen nada más céntrico?",
+                f"Es que la verdad una prima me dijo de un curso en el centro que cuesta la mitad. ¿Por qué el de ustedes es más caro?",
+                f"Entiendo lo de los grupos y el kit, pero ¿sí recupero rápido la inversión? Es un gasto fuerte para mí ahorita.",
+                f"Me convence cómo lo pones, sí se ve que es más profesional... ¿cómo puedo apartar mi lugar?",
+                f"¡Va! Pásame los datos.",
+            ]
+        else:
+            respuestas = [
+                f"Hmm interesante, cuéntame más sobre los cursos.",
+                f"¿Y dónde queda exactamente?",
+                f"¿Qué incluye? ¿Cuánto cuesta?",
+                f"Suena bien, pero ¿cómo sé que es diferente a otras academias?",
+                f"OK me interesa, ¿cómo le hago?",
+            ]
         idx = min(len(st.session_state.historial) // 2, len(respuestas) - 1)
         respuesta_lead = respuestas[idx]
         st.session_state.historial.append(
