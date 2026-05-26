@@ -269,51 +269,69 @@ async def ingest(file: UploadFile = File(...)):
 
 agent_router = AgentRouter(dry_run=os.getenv("DRY_RUN", "False").lower() == "true")
 
-class ChatRequest(BaseModel):
+class ChatPayload(BaseModel):
     lead_id: str
     message: str
+    phone: Optional[str] = None
+    current_status: Optional[str] = "qualifying"
 
-class ResetRequest(BaseModel):
+class ResetPayload(BaseModel):
     lead_id: str
 
 @app.post("/api/chat")
-def chat_endpoint(request: ChatRequest):
+async def chat_endpoint(payload: ChatPayload):
     """
-    Endpoint para procesar los mensajes de leads a través del AgentRouter.
-    Ideal para integraciones con webhooks de n8n, WhatsApp o Telegram.
+    Endpoint principal de producción. Recibe el impacto desde n8n (Telegram/WhatsApp),
+    lo procesa a través del AgentRouter real y devuelve la respuesta estructurada.
     """
     try:
-        response = agent_router.respond(
-            lead_id=request.lead_id,
-            message=request.message
-        )
+        if not payload.lead_id or not payload.message:
+            raise HTTPException(status_code=400, detail="Faltan parámetros obligatorios: lead_id o message")
+        
+        # Procesamiento en el enjambre de agentes real
+        response = agent_router.respond(lead_id=payload.lead_id, message=payload.message)
+        
         return {
-            "lead_id": response.lead_id,
-            "message": response.message,
-            "agent_name": response.agent_name,
-            "agent_type": response.agent_type,
-            "state_before": response.state_before,
+            "status": "success",
             "state_after": response.state_after,
-            "segment": response.segment,
-            "transition_occurred": response.transition_occurred,
-            "dry_run": response.dry_run,
-            "model_used": response.model_used,
+            "response": response.message,
             "tokens_used": response.tokens_used,
-            "timestamp": response.timestamp
+            "metadata": {
+                "lead_id": response.lead_id,
+                "agent_name": response.agent_name,
+                "agent_type": response.agent_type,
+                "state_before": response.state_before,
+                "segment": response.segment,
+                "transition_occurred": response.transition_occurred,
+                "dry_run": response.dry_run,
+                "model_used": response.model_used,
+                "timestamp": response.timestamp
+            }
         }
+        
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error en AgentRouter: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error interno en el AgentRouter: {str(e)}")
 
 @app.post("/api/chat/reset")
-def reset_lead_endpoint(request: ResetRequest):
+async def chat_reset_endpoint(payload: ResetPayload):
     """
-    Endpoint para reiniciar el estado e historial de un lead.
+    Endpoint de mantenimiento. Limpia el historial o estados del lead
+    en Supabase/Local para iniciar pruebas desde cero de forma limpia.
     """
-    success = agent_router.reset_lead(request.lead_id)
-    if success:
-        return {"status": "success", "message": f"Lead {request.lead_id} reiniciado correctamente."}
-    else:
-        return {"status": "not_found", "message": f"No se pudo encontrar o reiniciar el lead {request.lead_id}."}
+    try:
+        success = agent_router.reset_lead(payload.lead_id)
+        if success:
+            return {
+                "status": "success",
+                "message": f"Historial y estado del lead {payload.lead_id} reiniciados correctamente."
+            }
+        else:
+            return {
+                "status": "not_found",
+                "message": f"No se pudo encontrar o reiniciar el lead {payload.lead_id}."
+            }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al reiniciar el lead: {str(e)}")
 
 
 if __name__ == "__main__":
