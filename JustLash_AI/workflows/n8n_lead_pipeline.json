@@ -19,7 +19,7 @@
         "url": "=http://localhost:8000/api/chat",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"lead_id\": \"{{ $json.body.lead_id || $json.body.from }}\",\n  \"message\": \"{{ $json.body.message || $json.body.text }}\"\n}",
+        "jsonBody": "={\n  \"lead_id\": \"{{ $json.body?.lead_id || $json.body?.from || $json.message?.chat?.id || $json.from }}\",\n  \"message\": \"{{ $json.body?.message || $json.body?.text || $json.message?.text || $json.text }}\"\n}",
         "options": {}
       },
       "id": "agentrouter-api-call",
