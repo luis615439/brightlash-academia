@@ -16,6 +16,10 @@ def get_candidate_files(niches):
     category_map = {
         "Negocios": ["MARKETING_Y_VENTAS", "FINANZAS_Y_RIQUEZA", "MARKETING"],
         "Psicologia": ["PSICOLOGIA_Y_PNL", "PSICOLOGIA"],
+        "IA": ["IA_Y_AUTOMATIZACION"],
+        "Espiritualidad": ["ESPIRITUALIDAD", "ESPIRITUALIDAD_Y_BIENESTAR"],
+        "Relaciones": ["SEDUCCION_Y_RELACIONES"],
+        "Aprendizaje": ["LECTURA_Y_APRENDIZAJE"],
         "Belleza": [] # Se maneja con LIKE
     }
     
@@ -24,7 +28,7 @@ def get_candidate_files(niches):
     for niche in niches:
         if niche == "Belleza":
             cursor.execute("""
-                SELECT filename, current_path, topic FROM files 
+                SELECT filename, current_path, category FROM files 
                 WHERE category = 'GENERAL' 
                 AND (filename LIKE '%Lash%' OR filename LIKE '%Pestaña%' OR filename LIKE '%Belleza%' OR filename LIKE '%Beauty%')
             """)
@@ -32,14 +36,14 @@ def get_candidate_files(niches):
             categories = category_map.get(niche, [])
             if not categories: continue
             placeholders = ','.join(['?'] * len(categories))
-            cursor.execute(f"SELECT filename, current_path, topic FROM files WHERE category IN ({placeholders})", categories)
+            cursor.execute(f"SELECT filename, current_path, category FROM files WHERE category IN ({placeholders})", categories)
         
         candidates.extend(cursor.fetchall())
     
     conn.close()
     return candidates
 
-def run_bunker(niches=["Negocios", "Psicologia", "Belleza"], batch_size=10):
+def run_bunker(niches=["Negocios", "Psicologia", "IA", "Espiritualidad", "Relaciones", "Aprendizaje", "Belleza"], batch_size=10):
     print(f"🛡️  MODO BUNKER ACTIVADO: Iniciando Rescate para {', '.join(niches)}")
     
     candidates = get_candidate_files(niches)
@@ -50,6 +54,10 @@ def run_bunker(niches=["Negocios", "Psicologia", "Belleza"], batch_size=10):
     to_process = []
     
     for filename, path, topic in candidates:
+        ext = os.path.splitext(filename)[1].lower()
+        if ext not in ['.pdf', '.epub', '.docx', '.txt', '.md']:
+            continue
+            
         lesson_name = f"LECCION_{filename.split('.')[0]}.md"
         # También chequear el formato MICRO_LECCION
         micro_name = f"MICRO_LECCION_{filename.split('.')[0]}.md"
