@@ -1,0 +1,81 @@
+{
+  "project": "JustLash Academy — Sistema de Agentes AI",
+  "version": "1.1.0",
+  "brand": {
+    "name": "Just Lash Academy & Studio",
+    "location": "A media cuadra del Metro Balbuena, CDMX",
+    "standard": "Diamante",
+    "tone": "Tuteo neutro mexicano obligatorio (CERO voseo).",
+    "deposit": 1000,
+    "currency": "MXN",
+    "kit": "Kit de Bienvenida gratuito",
+    "max_group_size": 6,
+    "techniques": ["Clásicas", "Volumen", "Mega Volumen", "Anime", "Koda", "Ruso", "Wet Look"]
+  },
+  "agents": {
+    "qualifier": {
+      "name": "Calificadora Diamante",
+      "role": "Primer contacto. Filtra leads y los segmenta en 1A (Principiante) o 2A (Experta). Mantén siempre el tuteo mexicano.",
+      "model": "google/gemma-4-31b:free",
+      "temperature": 0.7,
+      "max_tokens": 500,
+      "triggers_on_states": ["new", "qualifying"]
+    },
+    "closer": {
+      "name": "Cerradora Diamante",
+      "role": "Convierte el lead calificado en alumna inscrita. Usa principios de Cialdini y tuteo mexicano estricto.",
+      "model": "deepseek/deepseek-r1:free",
+      "temperature": 0.7,
+      "max_tokens": 600,
+      "triggers_on_states": ["qualified", "closing"]
+    },
+    "remarketing": {
+      "name": "Reactivadora Diamante",
+      "role": "Re-engancha leads fríos con hook emocional y oferta limitada. Usa tuteo mexicano.",
+      "model": "google/gemma-4-31b:free",
+      "temperature": 0.8,
+      "max_tokens": 400,
+      "triggers_on_states": ["lost", "remarketing"],
+      "max_attempts": 3,
+      "cadence_hours": [24, 48, 72]
+    },
+    "content_creator": {
+      "name": "Estratega de Contenido Gemma 4",
+      "role": "Transforma libros de negocios en copys disruptivos para Instagram (Stories/Reels). Mantén tuteo mexicano.",
+      "model": "google/gemma-4-31b:free",
+      "temperature": 0.9,
+      "max_tokens": 2000,
+      "prompt_prefix": "Eres un experto en marketing digital y psicología de ventas. Usa el conocimiento del libro para crear un guion de Story/Reel que sea provocativo, premium y genere curiosidad (hook)."
+    },
+    "marketero": {
+      "name": "Marketero Lashes",
+      "role": "Estratega de marketing principal. Diseña embudos y estrategias de contenido alineados al Estándar Diamante y tuteo mexicano.",
+      "model": "deepseek/deepseek-r1:free",
+      "temperature": 0.7,
+      "max_tokens": 1000
+    }
+  },
+  "routing": {
+    "default_agent": "qualifier",
+    "transitions": {
+      "new": "qualifying",
+      "qualifying": "qualified",
+      "qualified": "closing",
+      "closing": ["converted", "lost"],
+      "lost": "remarketing",
+      "remarketing": ["closing", "dead"]
+    }
+  },
+  "segments": {
+    "1A": {
+      "label": "Principiante",
+      "description": "Sin experiencia previa en pestañas. Busca nueva carrera.",
+      "proof_strategy": "Casos de éxito y ex-alumnas que empezaron desde cero."
+    },
+    "2A": {
+      "label": "Experta",
+      "description": "Ya trabaja con pestañas. Busca especializarse en técnicas de tendencia.",
+      "proof_strategy": "Técnicas exclusivas: Anime, Koda, Ruso, Mega Volumen."
+    }
+  }
+}

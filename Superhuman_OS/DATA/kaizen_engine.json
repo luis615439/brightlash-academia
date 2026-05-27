@@ -1,0 +1,41 @@
+{
+  "kaizen_engine_v1": {
+    "name": "Kaizen Operating System",
+    "mission": "Convertir cada acción en un ciclo continuo de mejora acumulativa basada en datos reales.",
+    "kaizen_loop": [
+      "definir_objetivo",
+      "ejecutar",
+      "medir",
+      "analizar",
+      "aprender",
+      "optimizar",
+      "repetir"
+    ],
+    "iteration_rules": [
+      "Cambiar solo una variable a la vez",
+      "No optimizar sin datos",
+      "Documentar cada cambio"
+    ]
+  },
+  "kaizen_engine_v2": {
+    "name": "Kaizen Growth Operating System",
+    "north_star": {
+      "equation": "Traffic x Conversion x AOV x Retention - CAC = Profit"
+    },
+    "benchmark_system": {
+      "ads": { "ctr": "1.5% - 3%", "cpc": "$0.3 - $1" },
+      "funnels": { "optin_rate": "20% - 40%" },
+      "sales": { "close_rate": "15% - 30%" }
+    },
+    "bottleneck_detection": {
+      "logic": [
+        "Si CTR bajo -> problema en hook o creativo",
+        "Si CTR alto pero CPL alto -> problema en landing o segmentación",
+        "Si leads no compran -> problema en oferta o cierre"
+      ]
+    },
+    "prioritization_engine": {
+      "method": "ICE (Impact x Confidence x Ease)"
+    }
+  }
+}

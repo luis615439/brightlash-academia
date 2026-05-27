@@ -1,0 +1,41 @@
+{
+  "project": "JustLash AI - Portal de Cristal",
+  "standard": "Harness SDD v2",
+  "features": [
+    {
+      "id": "F01",
+      "name": "Visor de Lecciones (Portal de Cristal)",
+      "status": "done",
+      "sdd_phase": "archive",
+      "last_update": "2026-05-13"
+    },
+    {
+      "id": "F02",
+      "name": "Simulador de Ventas ADN JustLash",
+      "status": "done",
+      "sdd_phase": "archive",
+      "last_update": "2026-05-13"
+    },
+    {
+      "id": "F03",
+      "name": "Acceso Global (Túneles Seguros)",
+      "status": "active",
+      "sdd_phase": "archive",
+      "last_update": "2026-05-13"
+    },
+    {
+      "id": "F04",
+      "name": "Integración Real Vertex AI (VisualLab)",
+      "status": "pending",
+      "sdd_phase": "explore",
+      "priority": "high"
+    },
+    {
+      "id": "F05",
+      "name": "Migración a Supabase (Cloud Ops)",
+      "status": "backlog",
+      "sdd_phase": "none",
+      "priority": "medium"
+    }
+  ]
+}

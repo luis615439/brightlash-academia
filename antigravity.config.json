@@ -1,0 +1,52 @@
+{
+  "antigravity_version": "2.0",
+  "global_harnesses": {
+    "orchestrator": {
+      "name": "Hermes_Chief_Orchestrator",
+      "context_source": "./.antigravity/agents/hermes_matrix.md",
+      "mode": "strict"
+    }
+  },
+  "orchestrator": {
+    "name": "Hermes",
+    "role": "Chief Orchestrator & Tech Lead",
+    "version": "2.0 (Antigravity Enhanced)",
+    "focus": "JustLash Academy Operations & IA Lab Repo Control"
+  },
+  "swarm": {
+    "framework": "Open Swarm",
+    "specialists": 8,
+    "delegation_harness": "SDD (Specification-Driven Development)",
+    "communication_format": {
+      "status": "success/failed/paused",
+      "phase": "[Phase_Name]",
+      "summary": "Short actionable summary",
+      "risk_level": "low/medium/high",
+      "evidence": "Logs, tests, or verified data artifacts"
+    }
+  },
+  "routing": {
+    "heavy_routine_processing": "Gemma (local)",
+    "code_drafting": "Gemma (local)",
+    "data_filtering": "Gemma (local)",
+    "strategic_reasoning": "deep-reasoning (commercial)",
+    "high_stakes_verification": "deep-reasoning (commercial)"
+  },
+  "commercial_discipline": {
+    "lead_qualification": {
+      "system": "n8n",
+      "crm_sync": "Supabase",
+      "parameters": [
+        "Cat Eye",
+        "Doll Eye",
+        "Hybrid Volumes"
+      ],
+      "verification_fields": [
+        "Name",
+        "Phone",
+        "Skill Level",
+        "Intent"
+      ]
+    }
+  }
+}

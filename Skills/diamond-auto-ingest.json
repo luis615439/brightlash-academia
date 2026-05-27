@@ -1,0 +1,24 @@
+{
+  "skill_name": "diamond-auto-ingest",
+  "version": "1.0.0",
+  "description": "Vigilancia de calidad y clasificación de activos para la Diamond Vault.",
+  "config": {
+    "trigger": "detection_of_new_content",
+    "orchestrator": "OpenSwarm",
+    "validation_rules": {
+      "cross_check_vault": true,
+      "min_quality_score": 0.9,
+      "max_duplicates_allowed": 0,
+      "lodo_threshold_days": 7
+    },
+    "actions": {
+      "on_low_quality": "move_to_lodo",
+      "on_duplicate": "move_to_lodo",
+      "on_success": "index_to_graphrag"
+    }
+  },
+  "paths": {
+    "vault": "/Volumes/IA_LAB_DAT/IA_LAB_KNOWLEDGE_BASE/",
+    "lodo": "/Volumes/IA_LAB_DAT/REVISION_FINAL_LODO/"
+  }
+}

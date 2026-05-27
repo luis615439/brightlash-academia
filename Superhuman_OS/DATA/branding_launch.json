@@ -1,0 +1,23 @@
+{
+  "brando_os": {
+    "version": "v6_inevitable_antigeneric",
+    "mission": "Crear marcas inevitables eliminando todo lo genérico",
+    "core_principle": "Uniqueness = Inevitable",
+    "brain_system": ["primitivo (atención)", "emocional (status)", "racional (lógica)"],
+    "anti_generic_filter": [
+      "si_lo_puede_decir_cualquiera_no_lo_decimos",
+      "prefiero_perder_al_90_que_ser_ignorado_por_el_100",
+      "si_no_se_siente_no_existe"
+    ]
+  },
+  "happpy_os": {
+    "version": "v3",
+    "mission": "Crear, lanzar y escalar cosas inevitables en 48h",
+    "rules": [
+      "lanzar_en_48h",
+      "si_no_convierte_cambiar",
+      "eliminar_lo_generico",
+      "datos_sobre_opinion"
+    ]
+  }
+}

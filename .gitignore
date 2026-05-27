@@ -17,3 +17,15 @@ dist/
 build/
 .next/
 .vercel
+node_modules/
+
+# Python Virtual Environments
+.*_env/
+venv/
+env/
+
+# Large files & archives
+*.zip
+*.zip.tmp
+*.tar.gz
+
