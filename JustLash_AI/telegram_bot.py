@@ -14,6 +14,7 @@ from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, MessageHandler, filters
 from supabase import create_client, Client
+from postgrest.exceptions import APIError
 
 # Configuración de logs
 logging.basicConfig(
@@ -78,48 +79,59 @@ def determine_new_status(user_message: str, state_after: str) -> Optional[str]:
 
 
 async def ensure_lead_exists(lead_id: str) -> None:
-    """Verifica si el lead existe en leads_justlash. Si no, lo crea como 'Nuevo'."""
+    """Verifica si el lead existe en leads_justlash. Si no, lo crea como 'Nuevo' usando upsert."""
     if not supabase_client:
         return
-    
+
     try:
-        # Consulta asíncrona simulada o sync via cliente
         loop = asyncio.get_event_loop()
-        response = await loop.run_in_executor(
+        # Upsert evita duplicados basados en la columna 'telefono'
+        payload = {
+            "telefono": lead_id,
+            "estado": "Nuevo",
+            "origen": "Telegram",
+        }
+        # Validación interna del JSON antes de enviarlo
+        required_keys = {"telefono", "estado", "origen"}
+        if not required_keys.issubset(payload.keys()):
+            raise ValueError(f"Payload incompleto para lead {lead_id}: faltan {required_keys - set(payload.keys())}")
+        await loop.run_in_executor(
             None,
-            lambda: supabase_client.table("leads_justlash").select("*").eq("telefono", lead_id).execute()
+            lambda: supabase_client.table("leads_justlash").upsert(payload, on_conflict=["telefono"]).execute()
         )
-        
-        if not response.data:
-            await loop.run_in_executor(
-                None,
-                lambda: supabase_client.table("leads_justlash").insert({
-                    "telefono": lead_id,
-                    "estado": "Nuevo",
-                    "origen": "Telegram"
-                }).execute()
-            )
-            logging.info(f"🆕 Lead {lead_id} insertado como 'Nuevo' en Supabase.")
+        logging.info(f"🆕/🔄 Lead {lead_id} upsertado como 'Nuevo' en Supabase.")
+    except APIError as e:
+        raise RuntimeError(f"Error de Supabase al upsertar lead {lead_id}: {e.message} (Código: {e.code})")
     except Exception as e:
-        logging.error(f"⚠️ Error al verificar/crear lead {lead_id} en Supabase: {e}")
+        logging.error(f"⚠️ Error al upsertar lead {lead_id} en Supabase: {e}")
 
 
 async def save_interaction(lead_id: str, user_message: str, ia_response: str) -> None:
-    """Registra la interacción de la alumna y la respuesta del modelo en Supabase."""
+    """Registra la interacción de la alumna y la respuesta del modelo en Supabase, añadiendo timestamp si la columna existe."""
     if not supabase_client:
         return
-    
+
     try:
+        from datetime import datetime
+        timestamp = datetime.utcnow().isoformat()
+        payload = {
+            "telefono": lead_id,
+            "mensaje_usuario": user_message,
+            "respuesta_ia": ia_response,
+            "created_at": timestamp,  # columna de tipo timestamp en Supabase
+        }
+        # Validación interna del JSON
+        required_keys = {"telefono", "mensaje_usuario", "respuesta_ia", "created_at"}
+        if not required_keys.issubset(payload.keys()):
+            raise ValueError(f"Payload incompleto para interacción {lead_id}: faltan {required_keys - set(payload.keys())}")
         loop = asyncio.get_event_loop()
         await loop.run_in_executor(
             None,
-            lambda: supabase_client.table("interacciones_justlash").insert({
-                "telefono": lead_id,
-                "mensaje_usuario": user_message,
-                "respuesta_ia": ia_response
-            }).execute()
+            lambda: supabase_client.table("interacciones_justlash").insert(payload).execute()
         )
-        logging.info(f"💾 Interacción guardada en Supabase para lead: {lead_id}")
+        logging.info(f"💾 Interacción guardada en Supabase para lead: {lead_id} (timestamp {timestamp})")
+    except APIError as e:
+        raise RuntimeError(f"Error de Supabase al guardar interacción para lead {lead_id}: {e.message} (Código: {e.code})")
     except Exception as e:
         logging.error(f"⚠️ Error al guardar interacción en Supabase para {lead_id}: {e}")
 

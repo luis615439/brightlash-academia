@@ -619,11 +619,27 @@
       {
         "role": "assistant",
         "content": "¡Me encanta tu entusiasmo por iniciar! Aquí en JustLash formamos a las mejores diseñadoras de mirada desde cero, no necesitas experiencia. Pero nuestro programa es súper riguroso porque cuidamos mucho el prestigio de la marca... Antes de pasarte costos y el plan detallado, ¿te gustaría saber si aplicas para el proceso de selección? Son dos preguntitas rápidas."
+      },
+      {
+        "role": "user",
+        "content": "Hola"
+      },
+      {
+        "role": "assistant",
+        "content": "¡Me encanta tu entusiasmo por iniciar! Aquí en JustLash formamos a las mejores diseñadoras de mirada desde cero, no necesitas experiencia. Pero nuestro programa es súper riguroso porque cuidamos mucho el prestigio de la marca... Antes de pasarte costos y el plan detallado, ¿te gustaría saber si aplicas para el proceso de selección? Son dos preguntitas rápidas."
+      },
+      {
+        "role": "user",
+        "content": "Cuales"
+      },
+      {
+        "role": "assistant",
+        "content": "¡Qué gran paso estás por dar, [Nombre]! Como bien dicen nuestras más de 5,000 graduadas, el mejor momento para empezar fue ayer, el segundo mejor es hoy. 🏆\n\nTe cuento: Nuestro Curso Inicial está diseñado para principiantes absolutas desde cero. PERO ojo, no es un curso 'hobby' de fin de semana para pasar el rato; es el inicio formal de una carrera profesional de alto rendimiento en el mundo lashista.\n\n¿Estás buscando aprender esto para iniciar tu propio negocio de belleza o para aplicarlo de forma casual?"
       }
     ],
     "remarketing_attempt": 0,
     "created_at": "2026-05-05T23:35:23.241621+00:00",
-    "updated_at": "2026-05-27T04:32:41.395930+00:00",
+    "updated_at": "2026-05-28T04:08:40.902694+00:00",
     "metadata": {}
   },
   "test-camila-dynamic": {
